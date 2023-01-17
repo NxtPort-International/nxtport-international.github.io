@@ -1,0 +1,807 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Voyages API",
+    "description": "Awake.AI Voyage API provides predictions regarding ship voyages, such as\ndestination port, estimated time of arrival, and remaining travel time.\n\n## Endpoints\n\nThe API currently has endpoints for retrieving predicted schedules by ship or by port.\n\n### Ship schedule\n\nThe ship schedule endpoint can be queried for ships based on MMSI or IMO. The API automatically\ndetects if the given number is an MMSI or IMO. Depending on the voyage state and available data\n(e.g. AIS position data and port configuration), different types of predictions are provided for a\nvoyage:\n* If the ship is currently underway and the current destination and route can be estimated,\n  **destination**, **ETA** and **remaining travel time** predictions are provided.\n* If the ship is currently stationary and the destination and route can be estimated,\n  **destination** and  **remaining travel time** predictions are provided. If a ship is stationary,\n  the `voyageStatus` attribute is `stopped` or `not-started`.\n* If the ship's current destination can be estimated, but a route estimate is not available, only a\n  **destination** prediction is provided. This may be the case if the destination is a known port,\n  but route generation has not been enabled. If you encounter this for a destination port of\n  importance to you, please contact Awake.\n* If the current destination port cannot be estimated, no predictions will be provided for the\n  current voyage. This is also signified by the `predictability` field having the value\n  `not-predictable` in the response.\n* If the last received position update is regarded too old to perform reliable predictions, this is\n  indicated by the `predictability` field having the value `ship-data-not-updated` in the response.\n  In this case, no predictions are provided.\n\nA typical response for a ship's schedule is outlined below. A schedule consists of basic\nidentification information of the ship and a list of predicted voyages. The first voyage in the list\nis the current voyage, or the next voyage the ship is set to embark on, if the ship has not yet\ndeparted.\n\n    {\n      \"ship\": {\n        \"mmsi\": 255806256,\n        \"imo\": 9333395,\n        \"shipName\": \"VALDIVIA\"\n      },\n      \"predictability\": \"predictable\",\n      \"predictedVoyages\": [\n        {\n          \"voyageStatus\": \"underway\",\n          \"sequenceNo\": 0,\n          \"predictions\": [\n            {\n              \"predictionType\": \"destination\",\n              \"recordTime\": \"2021-09-06T08:39:59+00:00\",\n              \"locode\": \"FIHEL\"\n            },\n            {\n              \"predictionType\": \"eta\",\n              \"recordTime\": \"2021-09-06T08:39:59+00:00\",\n              \"locode\": \"FIHEL\",\n              \"zoneType\": \"pbp\",\n              \"zoneId\": \"cd909cc9-8f12-4462-a82e-3f6c0b1e9d78\",\n              \"zoneName\": \"Helsinki S\",\n              \"arrivalTime\": \"2021-09-06T08:39:59+00:00\"\n            },\n            {\n              \"predictionType\": \"eta\",\n              \"recordTime\": \"2021-09-06T08:39:59+00:00\",\n              \"locode\": \"FIHEL\",\n              \"zoneType\": \"berth\",\n              \"zoneId\": \"5948da18-2b19-4845-9aae-9d9a20b48c32\",\n              \"zoneName\": \"J\u00e4tk\u00e4n lauttapaikka 6\",\n              \"arrivalTime\": \"2021-09-06T08:39:59+00:00\"\n            },\n            {\n              \"predictionType\": \"travel-time\",\n              \"recordTime\": \"2021-09-06T08:39:59+00:00\",\n              \"locode\": \"FIHEL\",\n              \"zoneType\": \"pbp\",\n              \"zoneId\": \"cd909cc9-8f12-4462-a82e-3f6c0b1e9d78\",\n              \"zoneName\": \"Helsinki S\",\n              \"remainingTravelTime\": 32400\n            },\n            {\n              \"predictionType\": \"travel-time\",\n              \"recordTime\": \"2021-09-06T08:39:59+00:00\",\n              \"locode\": \"FIHEL\",\n              \"zoneType\": \"berth\",\n              \"zoneId\": \"5948da18-2b19-4845-9aae-9d9a20b48c32\",\n              \"zoneName\": \"J\u00e4tk\u00e4n lauttapaikka 6\",\n              \"remainingTravelTime\": 36000\n            }\n          ]\n        }\n      ]\n    }\n\n\nAll types of predictions have a `predictionType` attribute and a `recordTime` attribute. The\n`predictionType` attribute is used to distinguish different types of predictions from each other.\nThe `recordTime` is the timestamp of the most relevant data record used for the prediction. This is\ntypically the timestamp of the most recent AIS position message used for the prediction. Note that\nthe record time is not necessarily the same time point at which the actual prediction was computed.\nFor instance, an AIS message may delivered with a considerable delay if the ship is currently in an\narea covered only by satellite receivers.\n\nFor certain ports, Awake.AI's prediction services are able to predict destination, travel-time and\nETA multiple port calls (hops) in the future. These, if available, will be provided in the API with\na `sequenceNo` greater than 0.\n\n\n### Port schedule\n\nWith the port schedule endpoint, the schedule for all voyages currently predicted to arrive to the\ngiven port can be retrieved. The endpoint returns an array of voyages and their schedule, in a\nformat similar to that of the ship schedule endpoint:\n\n\n    [\n      ...,\n      {\n        \"ship\": {\n          \"mmsi\": 244130641,\n          \"imo\": 9374674,\n          \"shipName\": \"RUYTER\"\n        },\n        \"voyage\": {\n          \"voyageStatus\": \"underway\",\n          \"sequenceNo\": 0,\n          \"predictions\": [\n            {\n              \"predictionType\": \"destination\",\n              \"recordTime\": \"2022-03-28T07:19:31+00:00\",\n              \"locode\": \"FIRAU\"\n            },\n            {\n              \"predictionType\": \"eta\",\n              \"recordTime\": \"2022-03-28T08:18:12+00:00\",\n              \"locode\": \"FIRAU\",\n              \"zoneType\": \"pbp\",\n              \"zoneId\": \"16f9be48-c582-4819-9d80-c55c281c611c\",\n              \"zoneName\": \"Rauma-S\",\n              \"arrivalTime\": \"2022-03-29T21:32:32+00:00\"\n            },\n            {\n              \"predictionType\": \"eta\",\n              \"recordTime\": \"2022-03-28T08:18:12+00:00\",\n              \"locode\": \"FIRAU\",\n              \"zoneType\": \"berth\",\n              \"zoneId\": \"701105de-5b23-48f9-99e7-f9d0829f097b\",\n              \"zoneName\": \"Nro 17\",\n              \"arrivalTime\": \"2022-03-29T22:24:28+00:00\"\n            },\n            {\n              \"predictionType\": \"travel-time\",\n              \"recordTime\": \"2022-03-28T08:18:12+00:00\",\n              \"locode\": \"FIRAU\",\n              \"zoneType\": \"pbp\",\n              \"zoneId\": \"16f9be48-c582-4819-9d80-c55c281c611c\",\n              \"zoneName\": \"Rauma-S\",\n              \"remainingTravelTime\": 134060\n            },\n            {\n              \"predictionType\": \"travel-time\",\n              \"recordTime\": \"2022-03-28T08:18:12+00:00\",\n              \"locode\": \"FIRAU\",\n              \"zoneType\": \"berth\",\n              \"zoneId\": \"701105de-5b23-48f9-99e7-f9d0829f097b\",\n              \"zoneName\": \"Nro 17\",\n              \"remainingTravelTime\": 137176\n            }\n          ]\n        }\n      },\n      ...\n    ]\n\n\n## Response status codes\nHTTP 2XX response means that request was successful.\n\nHTTP 404 status means that a ship matching the given MMSI or IMO was not found.\n\nHTTP 422 status means that the provided ship ID was not identified as a valid IMO or MMSI.\n\nHTTP 5XX status means internal processing error, in which case it is recommended that client should\nretry operation with incremental backoff few times.\n",
+    "version": "1.2.0"
+  },
+  "paths": {
+    "/schedule/ship/{shipId}": {
+      "get": {
+        "tags": [
+          "schedule"
+        ],
+        "summary": "Predicted schedule for the ship matching the given MMSI or IMO",
+        "description": "Get predicted schedule for the ship matching the\ngiven MMSI or IMO.\n",
+        "operationId": "get_predicted_schedule_schedule_ship__shipId__get",
+        "parameters": [
+          {
+            "description": "MMSI or IMO of the ship",
+            "required": true,
+            "schema": {
+              "title": "MMSI or IMO",
+              "type": "integer",
+              "description": "MMSI or IMO of the ship"
+            },
+            "example": 255806256,
+            "name": "shipId",
+            "in": "path"
+          },
+          {
+            "description": "How many future predicted voyages to show at maximum. Default is 0,\n            which means that only the currently ongoing voyage is shown.",
+            "required": false,
+            "schema": {
+              "title": "Maximum sequence number of predicted voyages",
+              "maximum": 100.0,
+              "minimum": 0.0,
+              "type": "integer",
+              "description": "How many future predicted voyages to show at maximum. Default is 0,\n            which means that only the currently ongoing voyage is shown.",
+              "default": 10
+            },
+            "name": "maxSequenceNo",
+            "in": "query"
+          },
+          {
+            "description": "Prediction types to include in the response. Can be provided multiple\n            times to include multiple prediction types, .e.g.:\n            `?predictionType=destination&predictionType=eta`. If not provided, `destination`, `eta`\n            and `travel-time` predictions are included by default.\n            ",
+            "required": false,
+            "schema": {
+              "title": "Prediction types to include in the response",
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/PredictionType"
+              },
+              "description": "Prediction types to include in the response. Can be provided multiple\n            times to include multiple prediction types, .e.g.:\n            `?predictionType=destination&predictionType=eta`. If not provided, `destination`, `eta`\n            and `travel-time` predictions are included by default.\n            ",
+              "default": [
+                "destination",
+                "travel-time",
+                "eta"
+              ]
+            },
+            "name": "predictionType",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipVoyageSchedule"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schedule/port/{locode}/arrivals": {
+      "get": {
+        "tags": [
+          "schedule"
+        ],
+        "summary": "Get ETA and travel-time for all voyages, which are predicted to be currently bound for the given destination port.",
+        "description": "Get predicted schedule for all voyages currently predicted\nto arrive to the port signified by the given LOCODE.\n",
+        "operationId": "get_predicted_port_arrivals_schedule_port__locode__arrivals_get",
+        "parameters": [
+          {
+            "description": "The UN/LOCODE of the destination port for which to get predicted voyages",
+            "required": true,
+            "schema": {
+              "title": "UN/LOCODE of the port",
+              "pattern": "^[A-Z0-9]{5}$",
+              "type": "string",
+              "description": "The UN/LOCODE of the destination port for which to get predicted voyages"
+            },
+            "name": "locode",
+            "in": "path"
+          },
+          {
+            "description": "Maximum number of intermediate stops the ship is predicted to take\n            before embarking on this voyage. Default is 0, which means that only voyages that are\n            currently undertaken are shown.",
+            "required": false,
+            "schema": {
+              "title": "Maximum sequence number of the voyage",
+              "maximum": 100.0,
+              "minimum": 0.0,
+              "type": "integer",
+              "description": "Maximum number of intermediate stops the ship is predicted to take\n            before embarking on this voyage. Default is 0, which means that only voyages that are\n            currently undertaken are shown.",
+              "default": 10
+            },
+            "name": "maxSequenceNo",
+            "in": "query"
+          },
+          {
+            "description": "Prediction types to include in the response. Can be provided multiple\n            times to include multiple prediction types, .e.g.:\n            `?predictionType=destination&predictionType=eta`. If not provided, `destination`, `eta`\n            and `travel-time` predictions are included by default.\n            ",
+            "required": false,
+            "schema": {
+              "title": "Prediction types to include in the response",
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/PredictionType"
+              },
+              "description": "Prediction types to include in the response. Can be provided multiple\n            times to include multiple prediction types, .e.g.:\n            `?predictionType=destination&predictionType=eta`. If not provided, `destination`, `eta`\n            and `travel-time` predictions are included by default.\n            ",
+              "default": [
+                "destination",
+                "travel-time",
+                "eta"
+              ]
+            },
+            "name": "predictionType",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get Predicted Port Arrivals Schedule Port  Locode  Arrivals Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ShipVoyage"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ArrivalPortCallPrediction": {
+        "title": "ArrivalPortCallPrediction",
+        "required": [
+          "predictionType",
+          "portCallId",
+          "portCallUrn",
+          "portCallLocode"
+        ],
+        "type": "object",
+        "properties": {
+          "predictionType": {
+            "title": "Type of prediction, for remaining travel time prediction always equal to \"arrival-port-call\"",
+            "enum": [
+              "arrival-port-call"
+            ],
+            "type": "string"
+          },
+          "portCallId": {
+            "title": "Port call ID",
+            "type": "string",
+            "description": "Awake internal ID for the port call",
+            "format": "uuid"
+          },
+          "portCallUrn": {
+            "title": "Port call URN",
+            "type": "string",
+            "description": "External reference URN of the port call"
+          },
+          "portCallLocode": {
+            "title": "Port call LOCODE",
+            "pattern": "^[A-Z0-9]{5}$",
+            "type": "string",
+            "description": "UN/LOCODE associated with the port call"
+          }
+        }
+      },
+      "DestinationPrediction": {
+        "title": "DestinationPrediction",
+        "required": [
+          "predictionType",
+          "recordTime",
+          "locode"
+        ],
+        "type": "object",
+        "properties": {
+          "predictionType": {
+            "title": "Type of prediction, for destination prediction always equal to \"destination\"",
+            "enum": [
+              "destination"
+            ],
+            "type": "string"
+          },
+          "recordTime": {
+            "title": "Record time",
+            "type": "string",
+            "description": "Timestamp of the record (e.g. AIS message) used as basis for this prediction",
+            "format": "date-time"
+          },
+          "locode": {
+            "title": "Locode",
+            "pattern": "^[A-Z0-9]{5}$",
+            "type": "string",
+            "description": "UN/LOCODE of the predicted destination port"
+          }
+        }
+      },
+      "EtaPrediction": {
+        "title": "EtaPrediction",
+        "required": [
+          "predictionType",
+          "recordTime",
+          "locode",
+          "zoneType"
+        ],
+        "type": "object",
+        "properties": {
+          "predictionType": {
+            "title": "Type of prediction, for ETA prediction always equal to \"eta\"",
+            "enum": [
+              "eta"
+            ],
+            "type": "string"
+          },
+          "recordTime": {
+            "title": "Record time",
+            "type": "string",
+            "description": "Timestamp of the record (e.g. AIS message) used as basis for this prediction",
+            "format": "date-time"
+          },
+          "locode": {
+            "title": "Locode",
+            "pattern": "^[A-Z0-9]{5}$",
+            "type": "string",
+            "description": "UN/LOCODE of the destination port"
+          },
+          "zoneType": {
+            "title": "Zone type",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ZoneType"
+              }
+            ],
+            "description": "Type of zone to which the ETA is calculated (e.g. berth or pilot boarding place)"
+          },
+          "zoneId": {
+            "title": "Zone ID",
+            "type": "string",
+            "description": "ID of the zone (e.g. berth or PBP) the ship is predicted to arrive to, if available",
+            "format": "uuid"
+          },
+          "zoneName": {
+            "title": "Zone name",
+            "type": "string",
+            "description": "Name of the zone (e.g. berth or PBP) the ship is predicted to arrive to, if available"
+          },
+          "arrivalTime": {
+            "title": "Arrival time",
+            "type": "string",
+            "description": "The predicted time of arrival as an as a ISO8601 UTC timestamp",
+            "format": "date-time"
+          }
+        }
+      },
+      "HTTPValidationError": {
+        "title": "HTTPValidationError",
+        "type": "object",
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          }
+        }
+      },
+      "Predictability": {
+        "title": "Predictability",
+        "enum": [
+          "predictable",
+          "not-predictable",
+          "ship-data-not-updated"
+        ],
+        "type": "string",
+        "description": "An enumeration."
+      },
+      "PredictionType": {
+        "title": "PredictionType",
+        "enum": [
+          "destination",
+          "eta",
+          "travel-time",
+          "arrival-port-call"
+        ],
+        "type": "string",
+        "description": "An enumeration."
+      },
+      "ShipInfo": {
+        "title": "ShipInfo",
+        "required": [
+          "mmsi"
+        ],
+        "type": "object",
+        "properties": {
+          "mmsi": {
+            "title": "MMSI",
+            "type": "integer",
+            "description": "MMSI of the vessel",
+            "example": 255806256
+          },
+          "imo": {
+            "title": "IMO",
+            "type": "integer",
+            "description": "IMO of the vessel",
+            "example": 9333395
+          },
+          "shipName": {
+            "title": "Ship name",
+            "type": "string",
+            "description": "Name of the ship",
+            "example": "VALDIVIA"
+          }
+        }
+      },
+      "ShipVoyage": {
+        "title": "ShipVoyage",
+        "required": [
+          "ship",
+          "voyage"
+        ],
+        "type": "object",
+        "properties": {
+          "ship": {
+            "title": "Ship",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShipInfo"
+              }
+            ],
+            "description": "Details identifying the ship"
+          },
+          "voyage": {
+            "title": "Predicted voyage",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Voyage"
+              }
+            ],
+            "description": "Predicted voyage of the ship",
+            "example": {
+              "voyageStatus": "underway",
+              "sequenceNo": 0,
+              "predictions": [
+                {
+                  "predictionType": "destination",
+                  "recordTime": "2022-04-12T04:50:42+00:00",
+                  "locode": "FIKOK"
+                },
+                {
+                  "predictionType": "arrival-port-call",
+                  "portCallId": "ffd84987-ea0e-5462-b402-8281669e1196",
+                  "portCallUrn": "urn:awake:digitraffic-portcall:2826739",
+                  "portCallLocode": "FIKOK"
+                },
+                {
+                  "predictionType": "eta",
+                  "recordTime": "2022-04-12T04:50:42+00:00",
+                  "locode": "FIKOK",
+                  "zoneType": "pbp",
+                  "zoneId": "65e37127-97f1-4ada-b3f7-a687b3e3a65b",
+                  "zoneName": "Kokkola PBP",
+                  "arrivalTime": "2022-04-12T04:50:42+00:00"
+                },
+                {
+                  "predictionType": "eta",
+                  "recordTime": "2022-04-12T04:50:42+00:00",
+                  "locode": "FIKOK",
+                  "zoneType": "berth",
+                  "zoneId": "9fb758a5-af20-4082-be94-f56d7a579843",
+                  "zoneName": "Berth 11",
+                  "arrivalTime": "2022-04-12T04:50:42+00:00"
+                },
+                {
+                  "predictionType": "travel-time",
+                  "recordTime": "2022-04-12T04:50:42+00:00",
+                  "locode": "FIKOK",
+                  "zoneType": "pbp",
+                  "zoneId": "65e37127-97f1-4ada-b3f7-a687b3e3a65b",
+                  "zoneName": "Kokkola PBP",
+                  "remainingTravelTime": 32400
+                },
+                {
+                  "predictionType": "travel-time",
+                  "recordTime": "2022-04-12T04:50:42+00:00",
+                  "locode": "FIKOK",
+                  "zoneType": "berth",
+                  "zoneId": "9fb758a5-af20-4082-be94-f56d7a579843",
+                  "zoneName": "Berth 11",
+                  "remainingTravelTime": 36000
+                }
+              ]
+            }
+          }
+        }
+      },
+      "ShipVoyageSchedule": {
+        "title": "ShipVoyageSchedule",
+        "required": [
+          "ship",
+          "predictability",
+          "predictedVoyages"
+        ],
+        "type": "object",
+        "properties": {
+          "ship": {
+            "title": "Ship",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShipInfo"
+              }
+            ],
+            "description": "Details identifying the ship"
+          },
+          "predictability": {
+            "title": "Predictability",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Predictability"
+              }
+            ],
+            "description": "Indicates if the ship's voyage is currently predictable. If there has been no recent position updates for the ship, \"ship-data-not-updated\" is returned. If the current destination is not predictable, \"not-predictable\" is returned",
+            "example": "predictable"
+          },
+          "predictedVoyages": {
+            "title": "Predicted voyages",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Voyage"
+            },
+            "description": "Current and possible future predicted voyages for the ship",
+            "example": [
+              {
+                "voyageStatus": "underway",
+                "sequenceNo": 0,
+                "predictions": [
+                  {
+                    "predictionType": "destination",
+                    "recordTime": "2022-04-12T04:50:42+00:00",
+                    "locode": "FIKOK"
+                  },
+                  {
+                    "predictionType": "arrival-port-call",
+                    "portCallId": "ffd84987-ea0e-5462-b402-8281669e1196",
+                    "portCallUrn": "urn:awake:digitraffic-portcall:2826739",
+                    "portCallLocode": "FIKOK"
+                  },
+                  {
+                    "predictionType": "eta",
+                    "recordTime": "2022-04-12T04:50:42+00:00",
+                    "locode": "FIKOK",
+                    "zoneType": "pbp",
+                    "zoneId": "65e37127-97f1-4ada-b3f7-a687b3e3a65b",
+                    "zoneName": "Kokkola PBP",
+                    "arrivalTime": "2022-04-12T04:50:42+00:00"
+                  },
+                  {
+                    "predictionType": "eta",
+                    "recordTime": "2022-04-12T04:50:42+00:00",
+                    "locode": "FIKOK",
+                    "zoneType": "berth",
+                    "zoneId": "9fb758a5-af20-4082-be94-f56d7a579843",
+                    "zoneName": "Berth 11",
+                    "arrivalTime": "2022-04-12T04:50:42+00:00"
+                  },
+                  {
+                    "predictionType": "travel-time",
+                    "recordTime": "2022-04-12T04:50:42+00:00",
+                    "locode": "FIKOK",
+                    "zoneType": "pbp",
+                    "zoneId": "65e37127-97f1-4ada-b3f7-a687b3e3a65b",
+                    "zoneName": "Kokkola PBP",
+                    "remainingTravelTime": 32400
+                  },
+                  {
+                    "predictionType": "travel-time",
+                    "recordTime": "2022-04-12T04:50:42+00:00",
+                    "locode": "FIKOK",
+                    "zoneType": "berth",
+                    "zoneId": "9fb758a5-af20-4082-be94-f56d7a579843",
+                    "zoneName": "Berth 11",
+                    "remainingTravelTime": 36000
+                  }
+                ]
+              },
+              {
+                "voyageStatus": "underway",
+                "sequenceNo": 1,
+                "predictions": [
+                  {
+                    "predictionType": "destination",
+                    "recordTime": "2022-04-12T04:50:42+00:00",
+                    "locode": "FIRAU"
+                  },
+                  {
+                    "predictionType": "eta",
+                    "recordTime": "2022-04-12T04:50:42+00:00",
+                    "locode": "FIRAU",
+                    "zoneType": "pbp",
+                    "zoneId": "16f9be48-c582-4819-9d80-c55c281c611c",
+                    "zoneName": "Rauma-S",
+                    "arrivalTime": "2022-04-12T04:50:42+00:00"
+                  },
+                  {
+                    "predictionType": "eta",
+                    "recordTime": "2022-04-12T04:50:42+00:00",
+                    "locode": "FIRAU",
+                    "zoneType": "berth",
+                    "zoneId": "701105de-5b23-48f9-99e7-f9d0829f097b",
+                    "zoneName": "Nro 17",
+                    "arrivalTime": "2022-04-12T04:50:42+00:00"
+                  },
+                  {
+                    "predictionType": "travel-time",
+                    "recordTime": "2022-04-12T04:50:42+00:00",
+                    "locode": "FIRAU",
+                    "zoneType": "pbp",
+                    "zoneId": "16f9be48-c582-4819-9d80-c55c281c611c",
+                    "zoneName": "Rauma-S",
+                    "remainingTravelTime": 32400
+                  },
+                  {
+                    "predictionType": "travel-time",
+                    "recordTime": "2022-04-12T04:50:42+00:00",
+                    "locode": "FIRAU",
+                    "zoneType": "berth",
+                    "zoneId": "701105de-5b23-48f9-99e7-f9d0829f097b",
+                    "zoneName": "Nro 17",
+                    "remainingTravelTime": 36000
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "TravelTimePrediction": {
+        "title": "TravelTimePrediction",
+        "required": [
+          "predictionType",
+          "recordTime",
+          "locode",
+          "zoneType",
+          "remainingTravelTime"
+        ],
+        "type": "object",
+        "properties": {
+          "predictionType": {
+            "title": "Type of prediction, for remaining travel time prediction always equal to \"travel-time\"",
+            "enum": [
+              "travel-time"
+            ],
+            "type": "string"
+          },
+          "recordTime": {
+            "title": "Record time",
+            "type": "string",
+            "description": "Timestamp of the record (e.g. AIS message) used as basis for this prediction",
+            "format": "date-time"
+          },
+          "locode": {
+            "title": "Locode",
+            "pattern": "^[A-Z0-9]{5}$",
+            "type": "string",
+            "description": "UN/LOCODE of the destination port"
+          },
+          "zoneType": {
+            "title": "Zone type",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ZoneType"
+              }
+            ],
+            "description": "Type of zone to which the ETA is calculated (e.g. berth or pilot boarding place)"
+          },
+          "zoneId": {
+            "title": "Zone ID",
+            "type": "string",
+            "description": "ID of the zone (e.g. berth or PBP) the ship is predicted to arrive to, if available",
+            "format": "uuid"
+          },
+          "zoneName": {
+            "title": "Zone name",
+            "type": "string",
+            "description": "Name of the zone (e.g. berth or PBP) the ship is predicted to arrive to, if available"
+          },
+          "remainingTravelTime": {
+            "title": "Remaining travel time",
+            "type": "integer",
+            "description": "Predicted travel time to destination from the ship's last known position, in seconds"
+          }
+        }
+      },
+      "ValidationError": {
+        "title": "ValidationError",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "loc": {
+            "title": "Location",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        }
+      },
+      "Voyage": {
+        "title": "PredictedVoyage",
+        "required": [
+          "voyageStatus",
+          "sequenceNo",
+          "predictions"
+        ],
+        "type": "object",
+        "properties": {
+          "voyageStatus": {
+            "title": "Voyage status",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VoyageStatus"
+              }
+            ],
+            "description": "The status of the voyage indicates if the ship is currently undertaking this voyage, i.e. if the ship is stationary or currently under way towards the destination.",
+            "example": "underway"
+          },
+          "sequenceNo": {
+            "title": "Sequence number",
+            "minimum": 0.0,
+            "type": "integer",
+            "description": "The sequence number defines the order of predicted voyages. For the current voyage, `sequenceNo` is 0. For a ship that is currently stationary at port, the voyage with `sequenceNo` 0 is the next voyage the ship is set to embark on.",
+            "example": 0
+          },
+          "predictions": {
+            "title": "Predictions",
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/EtaPrediction"
+                },
+                {
+                  "$ref": "#/components/schemas/DestinationPrediction"
+                },
+                {
+                  "$ref": "#/components/schemas/TravelTimePrediction"
+                },
+                {
+                  "$ref": "#/components/schemas/ArrivalPortCallPrediction"
+                }
+              ]
+            },
+            "description": "A list of predictions, e.g. destination port and ETA for the voyage.",
+            "example": [
+              {
+                "predictionType": "destination",
+                "recordTime": "2022-04-12T04:50:42+00:00",
+                "locode": "FIKOK"
+              },
+              {
+                "predictionType": "arrival-port-call",
+                "portCallId": "ffd84987-ea0e-5462-b402-8281669e1196",
+                "portCallUrn": "urn:awake:digitraffic-portcall:2826739",
+                "portCallLocode": "FIKOK"
+              },
+              {
+                "predictionType": "eta",
+                "recordTime": "2022-04-12T04:50:42+00:00",
+                "locode": "FIKOK",
+                "zoneType": "pbp",
+                "zoneId": "65e37127-97f1-4ada-b3f7-a687b3e3a65b",
+                "zoneName": "Kokkola PBP",
+                "arrivalTime": "2022-04-12T04:50:42+00:00"
+              },
+              {
+                "predictionType": "eta",
+                "recordTime": "2022-04-12T04:50:42+00:00",
+                "locode": "FIKOK",
+                "zoneType": "berth",
+                "zoneId": "9fb758a5-af20-4082-be94-f56d7a579843",
+                "zoneName": "Berth 11",
+                "arrivalTime": "2022-04-12T04:50:42+00:00"
+              },
+              {
+                "predictionType": "travel-time",
+                "recordTime": "2022-04-12T04:50:42+00:00",
+                "locode": "FIKOK",
+                "zoneType": "pbp",
+                "zoneId": "65e37127-97f1-4ada-b3f7-a687b3e3a65b",
+                "zoneName": "Kokkola PBP",
+                "remainingTravelTime": 32400
+              },
+              {
+                "predictionType": "travel-time",
+                "recordTime": "2022-04-12T04:50:42+00:00",
+                "locode": "FIKOK",
+                "zoneType": "berth",
+                "zoneId": "9fb758a5-af20-4082-be94-f56d7a579843",
+                "zoneName": "Berth 11",
+                "remainingTravelTime": 36000
+              }
+            ]
+          }
+        }
+      },
+      "VoyageStatus": {
+        "title": "VoyageStatus",
+        "enum": [
+          "not-started",
+          "underway",
+          "stopped",
+          "completed"
+        ],
+        "type": "string",
+        "description": "An enumeration."
+      },
+      "ZoneType": {
+        "title": "ZoneType",
+        "enum": [
+          "berth",
+          "pbp"
+        ],
+        "type": "string",
+        "description": "An enumeration."
+      }
+    },
+    "securitySchemes": {
+      "Authorization": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "Ocp-Apim-Subscription-Key": {
+        "type": "apiKey",
+        "name": "Ocp-Apim-Subscription-Key",
+        "in": "header",
+        "description": "Your subscription key"
+      }
+    }
+  },
+  "security": [
+    {
+      "Authorization": [],
+      "Ocp-Apim-Subscription-Key": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "schedule",
+      "description": "Voyage schedule predictions (destination port, ETA, remaining travel time)"
+    }
+  ]
+}
