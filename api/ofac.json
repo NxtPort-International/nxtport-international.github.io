@@ -1,0 +1,1334 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "OFAC API",
+    "description": "OFAC API service documentation. ",
+    "license": {
+      "name": "Terms of User"
+    },
+    "version": "v3.0"
+  },
+  "paths": {
+    "/v3": {
+      "post": {
+        "tags": [
+          "Search API v3"
+        ],
+        "summary": "Individual or Entity Search",
+        "description": "Screens your client (case) against OFAC-API.com's combined data set using name, citizenship, DOB, passport and gender. Screen up to 1000 cases per request.",
+        "operationId": "post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequestV3"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully screened each search case of the request. Case match results are returned in map form in which the case name passed in becomes a key, allowing you to map any potential match back to your case.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponseV3"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failure to screen each search case of the batch. Inspect response error and errorMessage fields for more details.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2": {
+      "post": {
+        "tags": [
+          "Search API v2"
+        ],
+        "summary": "Individual or Entity Search",
+        "description": "Performs a single individual or entity screening based on name.",
+        "operationId": "post_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequestV2"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/batch": {
+      "post": {
+        "tags": [
+          "Search API v2"
+        ],
+        "summary": "Batch Search",
+        "description": "Batch search operation. Accepts up to 1000 individuals or entities.",
+        "operationId": "post_2",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchSearchRequestV2"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully screened each search phrase of the batch. Batch results are returned in map form in which the search phrase passed in becomes a key, allowing for mapping between the phrase and its potential result. ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchSearchResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failure to screen each search phrase of the batch. Inspect response error and errorMessage fields for more details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseSearchResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/id": {
+      "post": {
+        "tags": [
+          "Search API v2"
+        ],
+        "summary": "Individual or Entity ID Search",
+        "description": "Performs a single individual or entity screening based on known IDs such as IMO, passport, drivers license, etc.",
+        "operationId": "postId",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IdRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/data": {
+      "get": {
+        "tags": [
+          "World Data API"
+        ],
+        "summary": "WorldData API",
+        "description": "Consolidated global data formatted to loosely follow US Treasury List Entry data model.",
+        "operationId": "get",
+        "parameters": [
+          {
+            "name": "sources",
+            "in": "query",
+            "description": "Data source filter, only these data sources will be included. Comma separated. See Data Sources documentation page for allowable values. Passing an invalid source will result in an HTTP 400 Bad Request. Example: 'SDN, PEP'",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "types",
+            "in": "query",
+            "description": "Entity type filter, only these entity types will be included. Comma separated. Valid types are individual, vessel, entity. The default is all types. Passing an invalid type will result in an HTTP 400 Bad Request. Example: 'individual, entity'",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retreived dataset.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListEntry"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, check request parameters for invalid sources, types, etc. Additional information may be available in the response error message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "You are not subscribed to the Word Data API service. To add this service to your subscription, please email contact@ofac-api.com.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "You have exceeded your service limit. If you think this is an error, please email contact@ofac-api.com with details of this error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error, see error message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/data/{id}": {
+      "get": {
+        "tags": [
+          "World Data API"
+        ],
+        "summary": "WorldData API",
+        "description": "Consolidated global data formatted to loosely follow US Treasury List Entry data model.",
+        "operationId": "get_1",
+        "parameters": [
+          {
+            "name": "sources",
+            "in": "query",
+            "description": "Data source filter, only these data sources will be included. Comma separated. See Data Sources documentation page for allowable values. Passing an invalid source will result in an HTTP 400 Bad Request. Example: 'SDN, PEP'",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "types",
+            "in": "query",
+            "description": "Entity type filter, only these entity types will be included. Comma separated. Valid types are individual, vessel, entity. The default is all types. Passing an invalid type will result in an HTTP 400 Bad Request. Example: 'individual, entity'",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retreived dataset.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListEntry"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, check request parameters for invalid sources, types, etc. Additional information may be available in the response error message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "You are not subscribed to the Word Data API service. To add this service to your subscription, please email contact@ofac-api.com.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "You have exceeded your service limit. If you think this is an error, please email contact@ofac-api.com with details of this error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error, see error message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/status": {
+      "get": {
+        "tags": [
+          "Health API"
+        ],
+        "operationId": "get_2",
+        "responses": {
+          "200": {
+            "description": "default response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Case": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string",
+            "format": "date"
+          },
+          "citizenship": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "address": {
+            "$ref": "#/components/schemas/CaseAddress"
+          },
+          "passport": {
+            "$ref": "#/components/schemas/CasePassport"
+          },
+          "driversLicense": {
+            "$ref": "#/components/schemas/CaseDriversLicense"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "ssn": {
+            "type": "string"
+          },
+          "taxId": {
+            "type": "string"
+          },
+          "digitalCurrencyAddress": {
+            "type": "string"
+          },
+          "ids": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ID"
+            }
+          }
+        }
+      },
+      "CaseAddress": {
+        "type": "object",
+        "properties": {
+          "address1": {
+            "type": "string"
+          },
+          "address2": {
+            "type": "string"
+          },
+          "address3": {
+            "type": "string"
+          },
+          "address4": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "stateOrProvince": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          }
+        }
+      },
+      "CaseDriversLicense": {
+        "type": "object",
+        "properties": {
+          "licenseNumber": {
+            "type": "string"
+          },
+          "licenseCountry": {
+            "type": "string"
+          }
+        }
+      },
+      "CasePassport": {
+        "type": "object",
+        "properties": {
+          "passportNumber": {
+            "type": "string"
+          },
+          "passportCountry": {
+            "type": "string"
+          }
+        }
+      },
+      "ID": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "idNumber": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "issueDate": {
+            "type": "string"
+          },
+          "expirationDate": {
+            "type": "string"
+          },
+          "idDetailsString": {
+            "type": "string"
+          }
+        }
+      },
+      "SearchRequestV3": {
+        "type": "object",
+        "properties": {
+          "includeAlias": {
+            "type": "boolean"
+          },
+          "informalName": {
+            "type": "boolean"
+          },
+          "minScore": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "format": {
+            "type": "string"
+          },
+          "source": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "type": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cases": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Case"
+            }
+          }
+        }
+      },
+      "AKA": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "score": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "category": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nameFormatted": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string"
+          }
+        }
+      },
+      "Address": {
+        "type": "object",
+        "properties": {
+          "uid": {
+            "type": "string"
+          },
+          "address1": {
+            "type": "string"
+          },
+          "address2": {
+            "type": "string"
+          },
+          "address3": {
+            "type": "string"
+          },
+          "address4": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "stateOrProvince": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "fullAddressString": {
+            "type": "string"
+          }
+        }
+      },
+      "Passport": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "passportNumber": {
+            "type": "string"
+          },
+          "passportCountry": {
+            "type": "string"
+          },
+          "issueDate": {
+            "type": "string"
+          },
+          "expirationDate": {
+            "type": "string"
+          }
+        }
+      },
+      "SearchMatch": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string"
+          },
+          "addresses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Address"
+            }
+          },
+          "citizenship": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "phoneNumbers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "title": {
+            "type": "string"
+          },
+          "uid": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sdnType": {
+            "type": "string"
+          },
+          "remarks": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "programs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "additionalSanctions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "passports": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Passport"
+            }
+          },
+          "driversLicenses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CaseDriversLicense"
+            }
+          },
+          "callSign": {
+            "type": "string"
+          },
+          "vesselType": {
+            "type": "string"
+          },
+          "vesselFlag": {
+            "type": "string"
+          },
+          "tonnage": {
+            "type": "string"
+          },
+          "grossRegisteredTonnage": {
+            "type": "string"
+          },
+          "vesselOwner": {
+            "type": "string"
+          },
+          "effectiveDate": {
+            "type": "string"
+          },
+          "expirationDate": {
+            "type": "string"
+          },
+          "standardOrder": {
+            "type": "string"
+          },
+          "lastUpdate": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "frCitation": {
+            "type": "string"
+          },
+          "score": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "akas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AKA"
+            }
+          },
+          "ids": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ID"
+            }
+          }
+        }
+      },
+      "SearchResponseV3": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "boolean"
+          },
+          "errorMessage": {
+            "type": "string"
+          },
+          "sourcesUsed": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UsedSourceV3"
+            }
+          },
+          "matches": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/SearchMatch"
+              }
+            }
+          }
+        }
+      },
+      "UsedSourceV3": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "publishDate": {
+            "type": "string"
+          }
+        }
+      },
+      "SearchRequestV2": {
+        "type": "object",
+        "properties": {
+          "includeAlias": {
+            "type": "boolean"
+          },
+          "includeID": {
+            "type": "boolean"
+          },
+          "informalName": {
+            "type": "boolean"
+          },
+          "type": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "minScore": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "format": {
+            "type": "string"
+          },
+          "source": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "SearchResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "boolean"
+          },
+          "errorMessage": {
+            "type": "string"
+          },
+          "searchTerm": {
+            "type": "string"
+          },
+          "sourcesUsed": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UsedSource"
+            }
+          },
+          "matches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchMatch"
+            }
+          }
+        },
+        "xml": {
+          "name": "searchResponse"
+        }
+      },
+      "UsedSource": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          }
+        }
+      },
+      "BatchSearchRequestV2": {
+        "type": "object",
+        "properties": {
+          "includeAlias": {
+            "type": "boolean"
+          },
+          "includeID": {
+            "type": "boolean"
+          },
+          "informalName": {
+            "type": "boolean"
+          },
+          "type": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "minScore": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "format": {
+            "type": "string"
+          },
+          "source": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "BatchSearchResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "boolean"
+          },
+          "errorMessage": {
+            "type": "string"
+          },
+          "searchTerm": {
+            "type": "string"
+          },
+          "sourcesUsed": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UsedSource"
+            }
+          },
+          "matches": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/SearchMatch"
+              }
+            }
+          }
+        }
+      },
+      "BaseSearchResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "boolean"
+          },
+          "errorMessage": {
+            "type": "string"
+          },
+          "searchTerm": {
+            "type": "string"
+          },
+          "sourcesUsed": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UsedSource"
+            }
+          }
+        }
+      },
+      "IdRequest": {
+        "type": "object",
+        "properties": {
+          "includeAlias": {
+            "type": "boolean"
+          },
+          "includeID": {
+            "type": "boolean"
+          },
+          "informalName": {
+            "type": "boolean"
+          },
+          "type": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "minScore": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "format": {
+            "type": "string"
+          },
+          "source": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "id": {
+            "type": "string"
+          }
+        }
+      },
+      "BaseResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "boolean"
+          },
+          "errorMessage": {
+            "type": "string"
+          }
+        }
+      },
+      "ListEntry": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nameFormatted": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "dobs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "addresses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Address"
+            }
+          },
+          "citizenship": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "phoneNumbers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "passports": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Passport"
+            }
+          },
+          "programs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "placesOfBirth": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlaceOfBirth"
+            }
+          },
+          "emailAddresses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "nationality": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Nationality"
+            }
+          },
+          "ids": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          "sourceLinks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "websites": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "remarks": {
+            "type": "string"
+          },
+          "additionalSanctions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "effectiveDate": {
+            "type": "string"
+          },
+          "expirationDate": {
+            "type": "string"
+          },
+          "standardOrder": {
+            "type": "string"
+          },
+          "lastUpdate": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "frCitation": {
+            "type": "string"
+          },
+          "positions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "education": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "vesselCallSign": {
+            "type": "string"
+          },
+          "vesselType": {
+            "type": "string"
+          },
+          "vesselFlag": {
+            "type": "string"
+          },
+          "vesselOwner": {
+            "type": "string"
+          },
+          "vesselTonnage": {
+            "type": "string"
+          },
+          "vesselGrossTonnage": {
+            "type": "string"
+          },
+          "akas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AKA"
+            }
+          }
+        }
+      },
+      "Nationality": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "mainEntry": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PlaceOfBirth": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "placeOfBirth": {
+            "type": "string"
+          }
+        }
+      },
+      "StatusResponse": {
+        "type": "object",
+        "properties": {
+          "sdnPublishDate": {
+            "type": "string"
+          },
+          "sdnLastDownload": {
+            "type": "string"
+          },
+          "sdnRecordCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ofacConsolidatedPublishDate": {
+            "type": "string"
+          },
+          "ofacConsolidatedLastDownload": {
+            "type": "string"
+          },
+          "ofacConsolidatedRecordCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dplPublishDate": {
+            "type": "string"
+          },
+          "dplLastDownload": {
+            "type": "string"
+          },
+          "dplRecordCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unPublishDate": {
+            "type": "string"
+          },
+          "unLastDownload": {
+            "type": "string"
+          },
+          "unRecordCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "euPublishDate": {
+            "type": "string"
+          },
+          "euLastDownload": {
+            "type": "string"
+          },
+          "euRecordCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "samPublishDate": {
+            "type": "string"
+          },
+          "samLastDownload": {
+            "type": "string"
+          },
+          "samRecordCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hudPublishDate": {
+            "type": "string"
+          },
+          "hudLastDownload": {
+            "type": "string"
+          },
+          "hudRecordCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fhaPublishDate": {
+            "type": "string"
+          },
+          "fhaLastDownload": {
+            "type": "string"
+          },
+          "fhaRecordCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pepPublishDate": {
+            "type": "string"
+          },
+          "pepLastDownload": {
+            "type": "string"
+          },
+          "pepRecordCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ukPublishDate": {
+            "type": "string"
+          },
+          "ukLastDownload": {
+            "type": "string"
+          },
+          "ukRecordCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "apiStatus": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Authorization": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "Ocp-Apim-Subscription-Key": {
+        "type": "apiKey",
+        "name": "Ocp-Apim-Subscription-Key",
+        "in": "header",
+        "description": "Your subscription key"
+      }
+    }
+  },
+  "security": [
+    {
+      "Authorization": [],
+      "Ocp-Apim-Subscription-Key": []
+    }
+  ]
+}

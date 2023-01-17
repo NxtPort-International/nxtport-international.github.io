@@ -1,0 +1,673 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Portcall+ API",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "paths": {
+    "/ping": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Indicates that the api can be reached.",
+        "operationId": "Health_Ping",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "object"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/status": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Indicate the health status of the API.",
+        "operationId": "Health_Status",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LastCheckedDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LastCheckedDto"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/LastCheckedDto"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/LastCheckedDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vessels/expected": {
+      "get": {
+        "tags": [
+          "Vessels"
+        ],
+        "summary": "Get all the expected vessels of BEANR and BEZEE",
+        "operationId": "Vessels_Expected",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VoyageDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VoyageDto"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VoyageDto"
+                  }
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VoyageDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vessels/in-port": {
+      "get": {
+        "tags": [
+          "Vessels"
+        ],
+        "summary": "Get all the in-port vessels of BEANR and BEZEE",
+        "operationId": "Vessels_InPort",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VoyageDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VoyageDto"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VoyageDto"
+                  }
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VoyageDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vessels/overview": {
+      "get": {
+        "tags": [
+          "Vessels"
+        ],
+        "operationId": "Vessels_Overview",
+        "parameters": [
+          {
+            "name": "request",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OverviewStayDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OverviewStayDto"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OverviewStayDto"
+                  }
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OverviewStayDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ErrorDto": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "identifier": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "LastCheckedDto": {
+        "type": "object",
+        "properties": {
+          "lastChecked": {
+            "type": "string"
+          }
+        }
+      },
+      "VoyageDto": {
+        "type": "object",
+        "properties": {
+          "stayNumber": {
+            "type": "string"
+          },
+          "voyageNumber": {
+            "type": "string"
+          },
+          "voyageType": {
+            "type": "string"
+          },
+          "vessel": {
+            "$ref": "#/components/schemas/VesselDto"
+          },
+          "agent": {
+            "$ref": "#/components/schemas/AgentDto"
+          },
+          "stayBegin": {
+            "$ref": "#/components/schemas/TimeDto"
+          },
+          "stayEnd": {
+            "$ref": "#/components/schemas/TimeDto"
+          },
+          "fromLocation": {
+            "$ref": "#/components/schemas/LocationDto"
+          },
+          "toLocation": {
+            "$ref": "#/components/schemas/LocationDto"
+          },
+          "currentPort": {
+            "$ref": "#/components/schemas/PortDto"
+          },
+          "previousPort": {
+            "$ref": "#/components/schemas/PortDto"
+          },
+          "nextPort": {
+            "$ref": "#/components/schemas/PortDto"
+          },
+          "originPort": {
+            "$ref": "#/components/schemas/PortDto"
+          },
+          "destinationPort": {
+            "$ref": "#/components/schemas/PortDto"
+          },
+          "passages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationDto"
+            }
+          }
+        }
+      },
+      "VesselDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "imoNumber": {
+            "type": "string"
+          },
+          "mmsiNumber": {
+            "type": "string"
+          },
+          "callsign": {
+            "type": "string"
+          },
+          "flag": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "loa": {
+            "type": "number",
+            "format": "double"
+          },
+          "gbr": {
+            "type": "number",
+            "format": "double"
+          },
+          "tonnage": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "AgentDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "TimeDto": {
+        "type": "object",
+        "properties": {
+          "estimatedTime": {
+            "type": "string"
+          },
+          "actualTime": {
+            "type": "string"
+          }
+        }
+      },
+      "LocationDto": {
+        "type": "object",
+        "properties": {
+          "locode": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "estimatedTime": {
+            "type": "string"
+          },
+          "actualTime": {
+            "type": "string"
+          },
+          "anchored": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PortDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "locode": {
+            "type": "string"
+          }
+        }
+      },
+      "OverviewStayDto": {
+        "type": "object",
+        "properties": {
+          "stayNumber": {
+            "type": "string"
+          },
+          "cancelledOn": {
+            "type": "string"
+          },
+          "cancellationReason": {
+            "type": "string"
+          },
+          "vessel": {
+            "$ref": "#/components/schemas/OverviewVesselDto"
+          },
+          "stayBegin": {
+            "$ref": "#/components/schemas/TimeDto"
+          },
+          "stayEnd": {
+            "$ref": "#/components/schemas/TimeDto"
+          },
+          "voyages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OverviewVoyageDto"
+            }
+          },
+          "currentPort": {
+            "$ref": "#/components/schemas/PortDto"
+          },
+          "previousPort": {
+            "$ref": "#/components/schemas/PortDto"
+          },
+          "nextPort": {
+            "$ref": "#/components/schemas/PortDto"
+          },
+          "originPort": {
+            "$ref": "#/components/schemas/PortDto"
+          },
+          "destinationPort": {
+            "$ref": "#/components/schemas/PortDto"
+          }
+        }
+      },
+      "OverviewVesselDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "imoNumber": {
+            "type": "string"
+          },
+          "mmsiNumber": {
+            "type": "string"
+          },
+          "callsign": {
+            "type": "string"
+          },
+          "flag": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "length": {
+            "type": "number",
+            "format": "double"
+          },
+          "breadth": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "OverviewVoyageDto": {
+        "type": "object",
+        "properties": {
+          "voyageNumber": {
+            "type": "string"
+          },
+          "sequenceNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string"
+          },
+          "agent": {
+            "$ref": "#/components/schemas/AgentDto"
+          },
+          "cancelledOn": {
+            "type": "string"
+          },
+          "cancellationReason": {
+            "type": "string"
+          },
+          "fromLocation": {
+            "$ref": "#/components/schemas/LocationDto"
+          },
+          "toLocation": {
+            "$ref": "#/components/schemas/LocationDto"
+          },
+          "passages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationDto"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Authorization": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "Ocp-Apim-Subscription-Key": {
+        "type": "apiKey",
+        "name": "Ocp-Apim-Subscription-Key",
+        "in": "header",
+        "description": "Your subscription key"
+      }
+    }
+  },
+  "security": [
+    {
+      "Authorization": [],
+      "Ocp-Apim-Subscription-Key": []
+    }
+  ]
+}
