@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>NxtPort International - API Definitions</title>
+  <link rel="stylesheet" type="text/css" href="web/swagger-ui.css" />
+  <link rel="stylesheet" type="text/css" href="web/index.css" />
+  <link rel="icon" type="image/png" href="web/favicon" />
+</head>
+
+<body>
+  <div id="swagger-ui"></div>
+  <script src="web/swagger-ui-bundle.js" charset="UTF-8"></script>
+  <script src="web/swagger-ui-standalone-preset.js" charset="UTF-8"></script>
+  <script>
+    window.onload = function () {
+      const api = (new URL(document.location)).searchParams.get("api");
+      const url = api ? "https://nxtport-international.github.io/api/" + api + ".json" : "";
+      window.ui = SwaggerUIBundle({
+        url: url,
+        dom_id: '#swagger-ui',
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        plugins: [
+          SwaggerUIBundle.plugins.DownloadUrl
+        ],
+        layout: "StandaloneLayout"
+      });
+    };
+  </script>
+</body>
+
+</html>

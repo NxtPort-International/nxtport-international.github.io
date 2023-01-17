@@ -1,0 +1,139 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "i4cast",
+    "description": "i4sea - i4cast API",
+    "version": "0.2.0"
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "AtmoceanController"
+    }
+  ],
+  "paths": {
+    "/v1/atmocean/getStations": {
+      "post": {
+        "tags": [
+          "AtmoceanController"
+        ],
+        "description": "Return list of stations i4cast's available for download.",
+        "operationId": "AtmoceanController.getStations",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AtmoceanControllerGetStationsPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          },
+          "400": {
+            "description": "Missing required parameter",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/v1/atmocean/getEnvironmentalData": {
+      "post": {
+        "tags": [
+          "AtmoceanController"
+        ],
+        "description": "Returns forecast or observed environmental data from a given virtual station.",
+        "operationId": "AtmoceanController.getEnvironmentalData",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AtmoceanControllerGetEnvironmentalDataPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          },
+          "400": {
+            "description": "Missing required parameter",
+            "content": {}
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AtmoceanControllerGetStationsPayload": {
+        "required": [
+          "region"
+        ],
+        "type": "object",
+        "properties": {
+          "region": {
+            "type": "string"
+          }
+        }
+      },
+      "AtmoceanControllerGetEnvironmentalDataPayload": {
+        "required": [
+          "region",
+          "station_id"
+        ],
+        "type": "object",
+        "properties": {
+          "station_id": {
+            "type": "number"
+          },
+          "region": {
+            "type": "string"
+          },
+          "data_type": {
+            "type": "string"
+          },
+          "environmental_type": {
+            "type": "string"
+          },
+          "ensemble": {
+            "type": "boolean"
+          },
+          "create_at": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Authorization": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "Ocp-Apim-Subscription-Key": {
+        "type": "apiKey",
+        "name": "Ocp-Apim-Subscription-Key",
+        "in": "header",
+        "description": "Your subscription key"
+      }
+    }
+  },
+  "security": [
+    {
+      "Authorization": [],
+      "Ocp-Apim-Subscription-Key": []
+    }
+  ]
+}
