@@ -1,0 +1,2214 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/emissions/v2/calculate": {
+      "post": {
+        "operationId": "EmissionsController_calculateTransportEmissions",
+        "summary": "Calculate emission",
+        "description": "This endpoint provides the capability to calculate the CO2 emission for one or multiple transport legs. The endpoint supports different emission standards and input data types. The used combination should be provided in the ```name``` and ```type``` property.       \n For example, ```NL``` and ```consumption``` should be used to calculate and/or allocate emission if your data availability includes fuel consumption and you want to use the NL emission standard      \n>Note: Emissions should be calculated with one unique modality per request.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalculationInputTransportDTO"
+              },
+              "examples": {
+                "NL - consumption - liters": {
+                  "value": {
+                    "calculation": [
+                      {
+                        "name": "NL",
+                        "type": "consumption",
+                        "legId": "C101",
+                        "modality": "Road",
+                        "consumption": {
+                          "consumptionType": "l",
+                          "fuelType": "Diesel (Liter)",
+                          "fuelQuantity": 10
+                        }
+                      }
+                    ]
+                  }
+                },
+                "NL - consumption - km per liter": {
+                  "value": {
+                    "calculation": [
+                      {
+                        "name": "NL",
+                        "type": "consumption",
+                        "legId": "C101",
+                        "modality": "Barge",
+                        "consumption": {
+                          "consumptionType": "km/l",
+                          "fuelType": "LPG (Liter)",
+                          "fuelConsumption": 10,
+                          "actualDistance": 100
+                        }
+                      }
+                    ]
+                  }
+                },
+                "NL - intensity": {
+                  "value": {
+                    "calculation": [
+                      {
+                        "name": "NL",
+                        "type": "intensity",
+                        "legId": "C101",
+                        "origin": {
+                          "latitude": 52.2070276,
+                          "longitude": 6.8149356
+                        },
+                        "destination": {
+                          "latitude": 51.9452633,
+                          "longitude": 6.4350129
+                        },
+                        "vehicleType": "Truck >20 t",
+                        "cargoType": "Bulk and general cargo",
+                        "amount": 4500,
+                        "unit": "kg"
+                      }
+                    ]
+                  }
+                },
+                "GLEC - consumption - liter": {
+                  "value": {
+                    "calculation": [
+                      {
+                        "name": "GLEC",
+                        "type": "consumption",
+                        "legId": "C101",
+                        "modality": "Road",
+                        "consumption": {
+                          "consumptionType": "l",
+                          "fuelType": "Biodiesel 100% (B100) (Liter)",
+                          "fuelQuantity": 10
+                        }
+                      }
+                    ]
+                  }
+                },
+                "GLEC - consumption - km per liter": {
+                  "value": {
+                    "calculation": [
+                      {
+                        "name": "GLEC",
+                        "type": "consumption",
+                        "legId": "C101",
+                        "modality": "Sea",
+                        "consumption": {
+                          "consumptionType": "km/l",
+                          "fuelType": "Marine Diesel Oil (Liter)",
+                          "fuelConsumption": 10,
+                          "plannedDistance": 100
+                        }
+                      }
+                    ]
+                  }
+                },
+                "GLEC - intensity": {
+                  "value": {
+                    "calculation": [
+                      {
+                        "name": "GLEC",
+                        "type": "intensity",
+                        "legId": "C101",
+                        "origin": {
+                          "city": "Amsterdam",
+                          "country": "NL"
+                        },
+                        "destination": {
+                          "city": "Frankfurt",
+                          "country": "DE"
+                        },
+                        "vehicleType": "Artic truck up to 34 t GVW",
+                        "cargoType": "Bulk and general cargo",
+                        "fuelCategory": "Diesel 5% Biodiesel Blend",
+                        "amount": 4500,
+                        "unit": "kg"
+                      }
+                    ]
+                  }
+                },
+                "GLEC - intensity - Sea Container": {
+                  "value": {
+                    "calculation": [
+                      {
+                        "name": "GLEC",
+                        "type": "intensity",
+                        "legId": "C101",
+                        "origin": {
+                          "unlo": "NLRTM"
+                        },
+                        "destination": {
+                          "unlo": "USMIA"
+                        },
+                        "vehicleType": "Dry",
+                        "cargoType": "Containers",
+                        "amount": 4500,
+                        "unit": "teu"
+                      }
+                    ]
+                  }
+                },
+                "GLEC - intensity - Basic VehicleTypes": {
+                  "value": {
+                    "calculation": [
+                      {
+                        "name": "GLEC",
+                        "type": "intensity",
+                        "legId": "C101",
+                        "origin": {
+                          "postalcode": "3199",
+                          "country": "NL"
+                        },
+                        "destination": {
+                          "latitude": 50.08695886933538,
+                          "longitude": 14.436251530657078
+                        },
+                        "vehicleType": "Van",
+                        "unit": "kg",
+                        "amount": 4500
+                      }
+                    ]
+                  }
+                },
+                "UK - consumption": {
+                  "value": {
+                    "calculation": [
+                      {
+                        "name": "UK",
+                        "type": "consumption",
+                        "legId": "C101",
+                        "modality": "Road",
+                        "consumption": {
+                          "consumptionType": "l",
+                          "fuelType": "Diesel (Average Biofuel Blend) (Liter)",
+                          "fuelQuantity": 10
+                        }
+                      }
+                    ]
+                  }
+                },
+                "UK - intensity": {
+                  "value": {
+                    "calculation": [
+                      {
+                        "name": "UK",
+                        "type": "intensity",
+                        "legId": "C101",
+                        "origin": {
+                          "iata": "SYD",
+                          "city": "Sydney",
+                          "country": "AU"
+                        },
+                        "destination": {
+                          "postalcode": "2200",
+                          "city": "Sydney",
+                          "country": "AU"
+                        },
+                        "vehicleType": "Rigid Truck (>17 Tonnes)",
+                        "cargoType": "Bulk and general cargo",
+                        "amount": 4500,
+                        "unit": "kg"
+                      }
+                    ]
+                  }
+                },
+                "NL - CO2KPI": {
+                  "value": {
+                    "calculation": [
+                      {
+                        "name": "NL",
+                        "type": "CO2KPI",
+                        "legId": "C101",
+                        "origin": {
+                          "latitude": 52.2070276,
+                          "longitude": 6.8149356
+                        },
+                        "destination": {
+                          "latitude": 51.9452633,
+                          "longitude": 6.4350129
+                        },
+                        "vehicleType": "Truck <10 t",
+                        "amount": 4500,
+                        "unit": "kg",
+                        "CO2perUnitKM": 0.15
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Calculation performed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalculationOutputTransportDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDTO"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDTO"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDTO"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Transport Emissions"
+        ]
+      }
+    },
+    "/emissions/v2/allocate": {
+      "post": {
+        "operationId": "EmissionsController_calculateAllocateTransportEmissions",
+        "summary": "Allocate emission",
+        "description": "This endpoint provides the capability to allocate emission to one or multiple shipments. The endpoint expects a list of transport legs (or trips) which are used to calculate the total emission. Additionally, it expects a list of consignments related to these legs.        The API will allocate the total emission to the corresponding list of consignments based on the chosen framework ```name``` and calculation ```type```.        \n\n This endpoint supports different emission standards and input data.        \n For example, ```GLEC``` and ```intensity``` should be used to calculate and allocate emission if your data availability does not include fuel consumption and you want to use the GLEC emission standard.        \n\n Emissions can be allocated by either:        \n - using ```GreaterCircleDistance```, as recommended by EN-16258 and NL        \n - using ```PlannedDistance``` as recommended by GLEC.       \n\nThe allocation method can be set by providing the ```allocationMethod```, which defaults to ```GreaterCircleDistance```        \n In case of ```PlannedDistance```, the BigMile Route API calculates a planned distance between the provided origin and destination coordinates",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalculationAllocationInputTransportDTO"
+              },
+              "examples": {
+                "Allocation by default (GreaterCircleDistance)": {
+                  "value": {
+                    "calculation": [
+                      {
+                        "name": "NL",
+                        "type": "consumption",
+                        "legId": "1-TRUCK",
+                        "modality": "Road",
+                        "consumption": {
+                          "consumptionType": "l",
+                          "fuelType": "Diesel (Liter)",
+                          "fuelQuantity": 10
+                        }
+                      },
+                      {
+                        "name": "NL",
+                        "type": "consumption",
+                        "legId": "2-TRUCK",
+                        "modality": "Road",
+                        "consumption": {
+                          "consumptionType": "km/l",
+                          "fuelType": "Diesel (Liter)",
+                          "fuelConsumption": 10,
+                          "plannedDistance": 500
+                        }
+                      }
+                    ],
+                    "allocation": [
+                      {
+                        "consignmentId": "1235",
+                        "origin": {
+                          "postalcode": "3511AA",
+                          "country": "NL"
+                        },
+                        "destination": {
+                          "postalcode": "1031HX",
+                          "country": "NL"
+                        },
+                        "weight": 12000
+                      },
+                      {
+                        "consignmentId": "1237",
+                        "origin": {
+                          "latitude": "52.041790",
+                          "longitude": "6.617900"
+                        },
+                        "destination": {
+                          "latitude": "52.221539",
+                          "longitude": "6.893662"
+                        },
+                        "weight": 3000
+                      }
+                    ]
+                  }
+                },
+                "Allocation by GreaterCircleDistance": {
+                  "value": {
+                    "calculation": [
+                      {
+                        "name": "NL",
+                        "type": "consumption",
+                        "legId": "1-TRUCK",
+                        "modality": "Road",
+                        "consumption": {
+                          "consumptionType": "l",
+                          "fuelType": "Diesel (Liter)",
+                          "fuelQuantity": 10
+                        }
+                      },
+                      {
+                        "name": "NL",
+                        "type": "consumption",
+                        "legId": "2-TRUCK",
+                        "modality": "Road",
+                        "consumption": {
+                          "consumptionType": "km/l",
+                          "fuelType": "Diesel (Liter)",
+                          "fuelConsumption": 10,
+                          "plannedDistance": 500
+                        }
+                      }
+                    ],
+                    "allocationMethod": "GreaterCircleDistance",
+                    "allocation": [
+                      {
+                        "consignmentId": "1235",
+                        "origin": {
+                          "latitude": "52.041790",
+                          "longitude": "6.617900"
+                        },
+                        "destination": {
+                          "unlo": "NLRTM",
+                          "city": "Rotterdam",
+                          "country": "NL"
+                        },
+                        "weight": 12000
+                      },
+                      {
+                        "consignmentId": "1237",
+                        "origin": {
+                          "unlo": "NLRTM",
+                          "city": "Rotterdam",
+                          "country": "NL"
+                        },
+                        "destination": {
+                          "city": "Amsterdam",
+                          "country": "NL"
+                        },
+                        "weight": 3000
+                      }
+                    ]
+                  }
+                },
+                "Allocation by PlannedDistance": {
+                  "value": {
+                    "calculation": [
+                      {
+                        "name": "GLEC",
+                        "type": "consumption",
+                        "legId": "1-TRUCK",
+                        "modality": "Road",
+                        "consumption": {
+                          "consumptionType": "l",
+                          "fuelType": "Diesel (Liter)",
+                          "fuelQuantity": 10
+                        }
+                      },
+                      {
+                        "name": "GLEC",
+                        "type": "consumption",
+                        "legId": "2-TRUCK",
+                        "modality": "Road",
+                        "consumption": {
+                          "consumptionType": "km/l",
+                          "fuelType": "Diesel (Liter)",
+                          "fuelConsumption": 10,
+                          "plannedDistance": 500
+                        }
+                      }
+                    ],
+                    "allocationMethod": "PlannedDistance",
+                    "allocation": [
+                      {
+                        "consignmentId": "1235",
+                        "origin": {
+                          "latitude": "52.041790",
+                          "longitude": "6.617900"
+                        },
+                        "destination": {
+                          "latitude": "52.221539",
+                          "longitude": "6.893662"
+                        },
+                        "weight": 12000
+                      },
+                      {
+                        "consignmentId": "1237",
+                        "origin": {
+                          "latitude": "52.041790",
+                          "longitude": "6.617900"
+                        },
+                        "destination": {
+                          "latitude": "52.221539",
+                          "longitude": "6.893662"
+                        },
+                        "weight": 3000
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Allocation performed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalculationAllocationOutputTransportDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDTO"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDTO"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDTO"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Transport Emissions"
+        ]
+      }
+    },
+    "/emissions/v2/locations/calculate": {
+      "post": {
+        "operationId": "EmissionsController_calculateLocationEmissions",
+        "summary": "Calculate emission",
+        "description": "This endpoint provides the capability to calculate the CO2 emission for one or multiple locations. The endpoint supports consumption based and intensity based calculations.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalculationInputLocationDTO"
+              },
+              "examples": {
+                "GLEC - consumption": {
+                  "value": {
+                    "lang": "en_US",
+                    "calculation": [
+                      {
+                        "name": "GLEC",
+                        "type": "consumption",
+                        "locationId": "C101",
+                        "fuelType": "Biodiesel 100% (B100) (Liter)",
+                        "fuelQuantity": 10
+                      }
+                    ]
+                  }
+                },
+                "GLEC - intensity": {
+                  "value": {
+                    "lang": "en_US",
+                    "calculation": [
+                      {
+                        "name": "GLEC",
+                        "type": "intensity",
+                        "locationId": "C101",
+                        "locationType": "Transshipment site",
+                        "conditionedType": "Ambient",
+                        "amount": 4500,
+                        "unit": "kg"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Calculation performed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalculationOutputLocationDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDTO"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDTO"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDTO"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Location Emissions"
+        ]
+      }
+    },
+    "/emissions/v2/locations/allocate": {
+      "post": {
+        "operationId": "EmissionsController_calculateAllocateLocationEmissions",
+        "summary": "Allocate emission",
+        "description": "This endpoint provides the capability to allocate location emission to one or multiple shipments. The endpoint expects a list of locations which are used to calculate the total emission. Additionally, it expects a list of consignments related to these legs.     The API will allocate the total emission to the corresponding list of consignments based on the chosen framework ```name``` and calculation ```type```.     \n\n This endpoint supports different emission standards and input data",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalculationAllocationInputLocationDTO"
+              },
+              "examples": {
+                "GLEC - consumption": {
+                  "value": {
+                    "lang": "en_US",
+                    "calculation": [
+                      {
+                        "name": "GLEC",
+                        "type": "consumption",
+                        "locationId": "C101",
+                        "fuelType": "Biodiesel 100% (B100) (Liter)",
+                        "fuelQuantity": 10
+                      }
+                    ],
+                    "allocation": [
+                      {
+                        "consigmentId": "1235",
+                        "weight": 12000
+                      },
+                      {
+                        "consigmentId": "1237",
+                        "weight": 3000
+                      }
+                    ]
+                  }
+                },
+                "GLEC - intensity": {
+                  "value": {
+                    "lang": "en_US",
+                    "calculation": [
+                      {
+                        "name": "GLEC",
+                        "type": "intensity",
+                        "locationId": "C101",
+                        "locationType": "Transshipment site",
+                        "conditionedType": "Ambient",
+                        "amount": 4500,
+                        "unit": "kg"
+                      }
+                    ],
+                    "allocation": [
+                      {
+                        "consigmentId": "1235",
+                        "weight": 12000
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Allocation performed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalculationAllocationOutputLocationDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDTO"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDTO"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDTO"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Location Emissions"
+        ]
+      }
+    },
+    "/emissions/v2/health": {
+      "get": {
+        "operationId": "HealthController_getHealth",
+        "summary": "Health check for the API",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The Health Check is successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "info": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {},
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The Health Check is not successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "info": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        },
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "General"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "BigMile Emission API",
+    "description": "BigMile is a calculation and analysis platform which logistics service providers                     and shippers can use to optimize and report on their multimodal transport related CO2 emissions.                     \n\n The BigMile Emission API is a webservice to instantly receive allocated emission related to your shipments or trips.",
+    "version": "2.0",
+    "contact": {
+      "name": "BigMile",
+      "url": "https://bigmile.eu",
+      "email": "info@bigmile.eu"
+    },
+    "x-logo": {
+      "url": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4gPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI0LjMuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgLS0+IA0KCQk8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHZlcnNpb249IjEuMSIgaWQ9IkxvZ28iIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMTE0LjcyIDEwMS40MSIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjExNC43MiIgaGVpZ2h0PSIxMDEuNDEiPg0KCQkJPHJlY3QgZmlsbD0ibm9uZSIgd2lkdGg9IjExNC43MiIgaGVpZ2h0PSIxMDEuNDEiPjwvcmVjdD4gDQoJCQk8Zz4gDQoJCQkJPHBvbHlnb24gZmlsbD0iI0ZGRkZGRiIgcG9pbnRzPSI4Ni40OSw4MC44MyAxMDguOTcsODAuODMgMTA4Ljk3LDcxLjU3IDk3LjEsNzEuNTcgOTcuMSw2Ny45NyAxMDguOTcsNjcuOTcgMTA4Ljk3LDU4LjcxIDk3LjEsNTguNzEgOTcuMSw1NS4xMSAxMDguOTcsNTUuMTEgMTA4Ljk3LDQ1Ljg1IDg2LjQ5LDQ1Ljg1ICI+PC9wb2x5Z29uPiANCgkJCQk8cGF0aCBmaWxsPSIjRkZGRkZGIiBkPSJNNDUuNDQsNDAuMTVjMi4zOC0xLjA1LDQtMy4xNCw0LTcuMTZjMC03LjczLTYuMDMtMTAuMTYtMTMuMDQtMTAuMTZINS43NXYzNC45OGgzMS41NiBjNy4wMSwwLDEzLjA0LTIuNDMsMTMuMDQtMTAuMTZDNTAuMzUsNDMuMTUsNDguMzEsNDEuMDYsNDUuNDQsNDAuMTV6IE0xNi4zNiwzMi4wOWgxNy43MWMyLjM0LDAsMy44NywwLjI3LDMuODcsMS44IGMwLDEuNTMtMS41MywxLjgtMy44NywxLjhIMTYuMzZWMzIuMDl6IE0zNC45Nyw0OC41NUgxNi4zNnYtMy42aDE4LjYxYzIuMzQsMCwzLjg3LDAuMjcsMy44NywxLjggQzM4Ljg0LDQ4LjI4LDM3LjMxLDQ4LjU1LDM0Ljk3LDQ4LjU1eiI+PC9wYXRoPiANCgkJCQk8cG9seWdvbiBmaWxsPSIjRkZGRkZGIiBwb2ludHM9IjI4LjIzLDg0LjMzIDE5LjMzLDYwLjY5IDUuNzUsNjAuNjkgNS43NSw5NS42NiAxNS4yOCw5NS42NiAxNS4yOCw3Ny4zMiAyMi4yMSw5NS42NiAzMy4xNyw5NS42NiA0MC4xLDc3LjMyIDQwLjEsOTUuNjYgNDkuNjMsOTUuNjYgNDkuNjMsNjAuNjkgMzcuMTMsNjAuNjkgIj48L3BvbHlnb24+IA0KCQkJCTxwYXRoIGZpbGw9IiNGRkZGRkYiIGQ9Ik04Mi4wOCwyOS4zMWgxNi4yN3YzLjc5Yy0yLjg0LDAuNjQtNS44NywwLjk3LTkuMDgsMC45N2MtMTIuMjMsMC0xNC40Ny00Ljc3LTE0LjQ3LTkuMzUgYzAtNC41OSwyLjI1LTkuMzUsMTQuNDctOS4zNWM2LjQ3LDAsMTIuMjMsMS4xNywxNy4wOCwzLjE1bDIuNjEtOS40NGMtNC41OS0yLjA3LTExLjY5LTMuMzMtMTkuNjktMy4zMyBjLTIxLjQ5LDAtMjUuOTgsMTEuMTUtMjUuOTgsMTguOTdjMCw3LjgyLDQuNSwxOC45NywyNS45OCwxOC45N2M4LDAsMTUuMS0xLjUzLDE5LjY5LTQuMDV2LTE5LjZIODIuMDhWMjkuMzF6Ij48L3BhdGg+IA0KCQkJCTxwb2x5Z29uIGZpbGw9IiNGRkZGRkYiIHBvaW50cz0iNzQuNjIsNDUuODUgNjQuMDEsNDUuODUgNjQuMDEsODAuODMgODMuNzksODAuODMgODMuNzksNzEuNTcgNzQuNjIsNzEuNTcgIj48L3BvbHlnb24+IA0KCQkJCTxwb2x5Z29uIGZpbGw9IiNGRkZGRkYiIHBvaW50cz0iNTIuMzIsOTUuNjYgNjEuMzIsODAuODMgNjEuMzIsNDUuODUgNTIuMzIsNjAuNjkgIj48L3BvbHlnb24+IA0KCQkJCTxwb2x5Z29uIGZpbGw9IiNGRkZGRkYiIHBvaW50cz0iNTIuMzIsNTUuNzQgNjEuMzIsNDAuOTEgNjEuMzIsNy42NCA1Mi4zMiwyMi40NyAiPjwvcG9seWdvbj4gDQoJCQk8L2c+IA0KCQk8L3N2Zz4g",
+      "backgroundColor": "#263238",
+      "altText": "The standard in CO2 footprint optimization."
+    }
+  },
+  "tags": [
+    {
+      "name": "Transport Emissions",
+      "description": "The BigMile emission API contains two features: emission calculation and emission allocation.       \n * Calculation determines the total emission of one or multiple transport legs.       \n * Allocation determines the total emission of one or multiple trips and allocates it to individual shipments       \n\n\n The API supports different types of input data, such as:       \n * Default input data. No fuel information is available.       \n * Primary input data. Fuel consumption is available.       \n\n\n Additionally, the API supports different emission standards, such as:       \n * Dutch factors       \n * UK factors       \n * GLEC framework       \n\n\n When choosing to use the API, you need to provide:       \n 1. The framework name in ```name```       \n 2. The ```type``` of input data, e.g. consumption or intensity       \n For example, name: ```NL``` and type: ```consumption``` should be used to calculate and/or allocate emission if your data availability includes fuel consumption and you want to use the NL emission standard."
+    },
+    {
+      "name": "Location Emissions",
+      "description": "Calculate emissions originating from locations"
+    }
+  ],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "ErrorDTO": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "A message about what happened."
+          },
+          "status": {
+            "type": "number",
+            "description": "The status code of the error.",
+            "example": 422
+          },
+          "path": {
+            "type": "string",
+            "description": "The path where the error has occured.",
+            "example": "/emissions/leg/calculate"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "The timestamp of the error.",
+            "example": "2020-12-30T10:25:04.486Z"
+          }
+        },
+        "required": [
+          "message",
+          "status",
+          "path",
+          "timestamp"
+        ]
+      },
+      "CalculationInputTransportDTO": {
+        "type": "object",
+        "properties": {
+          "lang": {
+            "type": "string",
+            "description": "The language.",
+            "enum": [
+              "en_US",
+              "nl_NL",
+              "de_DE",
+              "es_ES"
+            ],
+            "default": "en_US"
+          },
+          "calculation": {
+            "type": "array",
+            "description": "The calculation input variables. A maximum of 10 calculations can be send in a single request.",
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ConsumptionCaseTransportDTO"
+                },
+                {
+                  "$ref": "#/components/schemas/IntensityCaseTransportDTO"
+                },
+                {
+                  "$ref": "#/components/schemas/CO2KPICaseTransportDTO"
+                }
+              ],
+              "discriminator": {
+                "propertyName": "type",
+                "mapping": {
+                  "consumption": "#/components/schemas/ConsumptionCaseTransportDTO",
+                  "intensity": "#/components/schemas/IntensityCaseTransportDTO",
+                  "CO2KPI": "#/components/schemas/CO2KPICaseTransportDTO"
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "calculation"
+        ]
+      },
+      "CalculationParametersResultAllocationResultTransportDTO": {
+        "type": "object",
+        "properties": {
+          "lang": {
+            "type": "string",
+            "description": "The language that has been used for the calculation."
+          },
+          "name": {
+            "type": "string",
+            "description": "The framework name that has been applied for calculation."
+          },
+          "type": {
+            "type": "string",
+            "description": "The calculation type that has been applied for calculation."
+          },
+          "frameworkVariant": {
+            "type": "string",
+            "description": "The framework variant that has been applied for calculation."
+          },
+          "modality": {
+            "type": "string",
+            "description": "The modality that has been used for calculation."
+          },
+          "vehicleType": {
+            "type": "string",
+            "description": "The vehicle type that has been used for calculation."
+          },
+          "cargoType": {
+            "type": "string",
+            "description": "The cargo type that has been used for calculation."
+          },
+          "fuelCategory": {
+            "type": "string",
+            "description": "The fuel category that has been used for calculation."
+          },
+          "fuelType": {
+            "type": "string",
+            "description": "The fuel type that has been used for calculation."
+          },
+          "loadCharacteristicsCategory": {
+            "type": "string",
+            "description": "The load characteristics category that has been used for calculation."
+          },
+          "roadCategory": {
+            "type": "string",
+            "description": "The road category that has been used for calculation."
+          },
+          "originTradelane": {
+            "type": "string",
+            "description": "The origin sea freight container tradelane that has been used for calculation."
+          },
+          "destinationTradelane": {
+            "type": "string",
+            "description": "The destination sea freight container tradelane that has been used for calculation."
+          },
+          "haulType": {
+            "type": "string",
+            "description": "The air freight haul type that has been used for calculation."
+          },
+          "temperatureControlled": {
+            "type": "boolean",
+            "description": "The indicator whether transport is temperature controlled."
+          },
+          "uplifts": {
+            "description": "Indicates if any uplift factors have been applied to this calculation",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "usedDistance": {
+            "type": "number",
+            "description": "The distance in kilometers used during the calculation, includes corrections when required."
+          }
+        },
+        "required": [
+          "lang",
+          "name",
+          "type",
+          "frameworkVariant"
+        ]
+      },
+      "CalculationResultAllocationResultTransportDTO": {
+        "type": "object",
+        "properties": {
+          "legId": {
+            "type": "string",
+            "description": "The leg identifier.",
+            "example": "C101"
+          },
+          "CO2eWTW": {
+            "type": "number",
+            "description": "Well-to-Wheel (WTW) Emissions in kg.",
+            "example": 1230
+          },
+          "CO2eTTW": {
+            "type": "number",
+            "description": "Tank-to-Wheel (TTW) Emissions in kg.",
+            "example": 640
+          },
+          "calculationParameters": {
+            "description": "Parameters used to calculate emissions",
+            "example": {
+              "lang": "en_US",
+              "name": "NL",
+              "type": "intensity",
+              "frameworkVariant": "CargoType VehicleType",
+              "modality": "Road",
+              "vehicleType": "Truck >20 t",
+              "cargoType": "BULK"
+            },
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CalculationParametersResultAllocationResultTransportDTO"
+              }
+            ]
+          }
+        },
+        "required": [
+          "legId",
+          "CO2eWTW",
+          "calculationParameters"
+        ]
+      },
+      "CalculationOutputTransportDTO": {
+        "type": "object",
+        "properties": {
+          "legs": {
+            "description": "Total kg CO2e emission per legId.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CalculationResultAllocationResultTransportDTO"
+            }
+          },
+          "totalCO2eWTW": {
+            "type": "number",
+            "description": "Total kg CO2e Well-To-Wheel emission of all legs.",
+            "example": 1230
+          },
+          "totalCO2eTTW": {
+            "type": "number",
+            "description": "Total kg CO2e Tank-To-Wheel emission of all legs.",
+            "example": 640
+          }
+        },
+        "required": [
+          "legs",
+          "totalCO2eWTW",
+          "totalCO2eTTW"
+        ]
+      },
+      "GeoreferenceDTO": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "description": "The latitude.",
+            "example": 51.456
+          },
+          "longitude": {
+            "type": "number",
+            "description": "The longitude.",
+            "example": -58.6934
+          },
+          "iata": {
+            "type": "string",
+            "description": "The IATA code.",
+            "example": "AMS"
+          },
+          "unlo": {
+            "type": "string",
+            "description": "The UNLOCODE.",
+            "example": "GBSND"
+          },
+          "railterminal": {
+            "type": "string",
+            "description": "The railterminal.",
+            "example": "BE - Antwerpen-Zuid"
+          },
+          "postalcode": {
+            "type": "string",
+            "description": "The postal code.",
+            "example": "1234AB"
+          },
+          "city": {
+            "type": "string",
+            "description": "The cityname.",
+            "example": "Maarssen"
+          },
+          "country": {
+            "type": "string",
+            "description": "The ISO Alpha-2 code of the country.",
+            "example": "Netherlands"
+          }
+        }
+      },
+      "AllocationTransportDTO": {
+        "type": "object",
+        "properties": {
+          "consignmentId": {
+            "type": "string",
+            "description": "The consignment identifier.",
+            "example": "1234"
+          },
+          "origin": {
+            "description": "The origin of the consignment",
+            "example": "",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GeoreferenceDTO"
+              }
+            ]
+          },
+          "destination": {
+            "description": "The destination of the consignment",
+            "example": "",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GeoreferenceDTO"
+              }
+            ]
+          },
+          "weight": {
+            "type": "number",
+            "example": 752,
+            "description": "Shipped weight in kilograms."
+          }
+        },
+        "required": [
+          "consignmentId",
+          "origin",
+          "destination",
+          "weight"
+        ]
+      },
+      "CalculationAllocationInputTransportDTO": {
+        "type": "object",
+        "properties": {
+          "lang": {
+            "type": "string",
+            "description": "The language.",
+            "enum": [
+              "en_US",
+              "nl_NL",
+              "de_DE",
+              "es_ES"
+            ],
+            "default": "en_US"
+          },
+          "calculation": {
+            "type": "array",
+            "description": "The calculation input variables. A maximum of 10 calculations can be send in a single request.",
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ConsumptionCaseTransportDTO"
+                },
+                {
+                  "$ref": "#/components/schemas/IntensityCaseTransportDTO"
+                },
+                {
+                  "$ref": "#/components/schemas/CO2KPICaseTransportDTO"
+                }
+              ],
+              "discriminator": {
+                "propertyName": "type",
+                "mapping": {
+                  "consumption": "#/components/schemas/ConsumptionCaseTransportDTO",
+                  "intensity": "#/components/schemas/IntensityCaseTransportDTO",
+                  "CO2KPI": "#/components/schemas/CO2KPICaseTransportDTO"
+                }
+              }
+            }
+          },
+          "allocationMethod": {
+            "type": "string",
+            "description": "The allocation method.",
+            "enum": [
+              "GreaterCircleDistance",
+              "PlannedDistance"
+            ],
+            "default": "GreaterCircleDistance"
+          },
+          "allocation": {
+            "description": "The allocation input variables. A maximum of 25 allocations can be send in a single request.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AllocationTransportDTO"
+            }
+          }
+        },
+        "required": [
+          "calculation",
+          "allocation"
+        ]
+      },
+      "AllocationResultTransportDTO": {
+        "type": "object",
+        "properties": {
+          "consignmentId": {
+            "type": "string",
+            "description": "Consignment ID"
+          },
+          "CO2eWTW": {
+            "type": "number",
+            "description": "Kg CO2e emission Well-to-Wheel per consignmentId.",
+            "example": 1230
+          },
+          "CO2eTTW": {
+            "type": "number",
+            "description": "Kg CO2e emission Tank-to-Wheel per consignmentId.",
+            "example": 640
+          }
+        },
+        "required": [
+          "consignmentId",
+          "CO2eWTW",
+          "CO2eTTW"
+        ]
+      },
+      "CalculationAllocationOutputTransportDTO": {
+        "type": "object",
+        "properties": {
+          "legs": {
+            "description": "Total kg CO2e emission per legId.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CalculationResultAllocationResultTransportDTO"
+            }
+          },
+          "totalCO2eWTW": {
+            "type": "number",
+            "description": "Total kg CO2e Well-To-Wheel emission of all legs.",
+            "example": 1230
+          },
+          "totalCO2eTTW": {
+            "type": "number",
+            "description": "Total kg CO2e Tank-To-Wheel emission of all legs.",
+            "example": 640
+          },
+          "allocation": {
+            "description": "Allocated emissions per consignment.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AllocationResultTransportDTO"
+            }
+          }
+        },
+        "required": [
+          "legs",
+          "totalCO2eWTW",
+          "totalCO2eTTW",
+          "allocation"
+        ]
+      },
+      "CalculationInputLocationDTO": {
+        "type": "object",
+        "properties": {
+          "lang": {
+            "type": "string",
+            "description": "The language",
+            "enum": [
+              "en_US"
+            ],
+            "default": "en_US"
+          },
+          "calculation": {
+            "type": "array",
+            "description": "The calculation input variables. A maximum of 10 calculations can be send in a single request.",
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/IntensityCaseLocationDTO"
+                },
+                {
+                  "$ref": "#/components/schemas/ConsumptionLocationDTO"
+                }
+              ],
+              "discriminator": {
+                "propertyName": "type",
+                "mapping": {
+                  "intensity": "#/components/schemas/IntensityCaseLocationDTO",
+                  "consumption": "#/components/schemas/ConsumptionLocationDTO"
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "calculation"
+        ]
+      },
+      "CalculationParametersResultAllocationResultLocationDTO": {
+        "type": "object",
+        "properties": {
+          "lang": {
+            "type": "string",
+            "description": "The language that has been used for the calculation."
+          },
+          "name": {
+            "type": "string",
+            "description": "The framework name that has been applied for calculation."
+          },
+          "type": {
+            "type": "string",
+            "description": "The calculation type that has been applied for calculation."
+          },
+          "frameworkVariant": {
+            "type": "string",
+            "description": "The framework variant that has been applied for calculation."
+          },
+          "locationType": {
+            "type": "string",
+            "description": "The location type that has been used for calculation."
+          },
+          "conditionedType": {
+            "type": "string",
+            "description": "The condition type that has been used for the calculation."
+          },
+          "fuelType": {
+            "type": "string",
+            "description": "The fuel type that has been used for calculation."
+          }
+        },
+        "required": [
+          "lang",
+          "name",
+          "type",
+          "frameworkVariant"
+        ]
+      },
+      "CalculationResultAllocationResultLocationDTO": {
+        "type": "object",
+        "properties": {
+          "locationId": {
+            "type": "string",
+            "description": "The location identifier.",
+            "example": "C101"
+          },
+          "CO2eWTW": {
+            "type": "number",
+            "description": "Well-to-Wheel (WTW) Emissions in kg.",
+            "example": 1230
+          },
+          "CO2eTTW": {
+            "type": "number",
+            "description": "Tank-to-Wheel (TTW) Emissions in kg.",
+            "example": 640
+          },
+          "calculationParameters": {
+            "description": "Parameters used to calculate emissions",
+            "example": {
+              "lang": "en_US",
+              "name": "GLEC",
+              "type": "intensity"
+            },
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CalculationParametersResultAllocationResultLocationDTO"
+              }
+            ]
+          }
+        },
+        "required": [
+          "locationId",
+          "CO2eWTW",
+          "calculationParameters"
+        ]
+      },
+      "CalculationOutputLocationDTO": {
+        "type": "object",
+        "properties": {
+          "locations": {
+            "description": "Total kg CO2e emission per locationId.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CalculationResultAllocationResultLocationDTO"
+            }
+          },
+          "totalCO2eWTW": {
+            "type": "number",
+            "description": "Total kg CO2e Well-To-Wheel emission of all locations.",
+            "example": 1230
+          },
+          "totalCO2eTTW": {
+            "type": "number",
+            "description": "Total kg CO2e Tank-To-Wheel emission of all locations.",
+            "example": 640
+          }
+        },
+        "required": [
+          "locations",
+          "totalCO2eWTW",
+          "totalCO2eTTW"
+        ]
+      },
+      "AllocationLocationDTO": {
+        "type": "object",
+        "properties": {
+          "consignmentId": {
+            "type": "string",
+            "description": "The consignment identifier.",
+            "example": "1234"
+          },
+          "weight": {
+            "type": "number",
+            "example": 752,
+            "description": "Shipped weight in kilograms."
+          }
+        },
+        "required": [
+          "consignmentId",
+          "weight"
+        ]
+      },
+      "CalculationAllocationInputLocationDTO": {
+        "type": "object",
+        "properties": {
+          "lang": {
+            "type": "string",
+            "description": "The language",
+            "enum": [
+              "en_US"
+            ],
+            "default": "en_US"
+          },
+          "calculation": {
+            "type": "array",
+            "description": "The calculation input variables. A maximum of 10 calculations can be send in a single request.",
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/IntensityCaseLocationDTO"
+                },
+                {
+                  "$ref": "#/components/schemas/ConsumptionLocationDTO"
+                }
+              ],
+              "discriminator": {
+                "propertyName": "type",
+                "mapping": {
+                  "intensity": "#/components/schemas/IntensityCaseLocationDTO",
+                  "consumption": "#/components/schemas/ConsumptionLocationDTO"
+                }
+              }
+            }
+          },
+          "allocation": {
+            "description": "The allocation input variables. A maximum of 25 allocations can be send in a single request.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AllocationLocationDTO"
+            }
+          }
+        },
+        "required": [
+          "calculation",
+          "allocation"
+        ]
+      },
+      "AllocationResultLocationDTO": {
+        "type": "object",
+        "properties": {
+          "consignmentId": {
+            "type": "string",
+            "description": "Consignment ID"
+          },
+          "CO2eWTW": {
+            "type": "number",
+            "description": "Kg CO2e emission Well-to-Wheel per consignmentId.",
+            "example": 1230
+          },
+          "CO2eTTW": {
+            "type": "number",
+            "description": "Kg CO2e emission Tank-to-Wheel per consignmentId.",
+            "example": 640
+          }
+        },
+        "required": [
+          "consignmentId",
+          "CO2eWTW",
+          "CO2eTTW"
+        ]
+      },
+      "CalculationAllocationOutputLocationDTO": {
+        "type": "object",
+        "properties": {
+          "locations": {
+            "description": "Total kg CO2e emission per locationId.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CalculationResultAllocationResultLocationDTO"
+            }
+          },
+          "totalCO2eWTW": {
+            "type": "number",
+            "description": "Total kg CO2e Well-To-Wheel emission of all locations.",
+            "example": 1230
+          },
+          "totalCO2eTTW": {
+            "type": "number",
+            "description": "Total kg CO2e Tank-To-Wheel emission of all locations.",
+            "example": 640
+          },
+          "allocation": {
+            "description": "Allocated emissions per consignment.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AllocationResultLocationDTO"
+            }
+          }
+        },
+        "required": [
+          "locations",
+          "totalCO2eWTW",
+          "totalCO2eTTW",
+          "allocation"
+        ]
+      },
+      "FrameworkTransportDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The framework name.",
+            "enum": [
+              "GLEC",
+              "NL",
+              "UK"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "description": "The calculation type.",
+            "enum": [
+              "consumption",
+              "intensity",
+              "CO2KPI"
+            ]
+          },
+          "legId": {
+            "type": "string",
+            "description": "The leg identifier.",
+            "example": "C101"
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "legId"
+        ]
+      },
+      "ConsumptionCaseTransportDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The framework name.",
+            "enum": [
+              "GLEC",
+              "NL",
+              "UK"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "description": "The calculation type.",
+            "enum": [
+              "consumption",
+              "intensity",
+              "CO2KPI"
+            ]
+          },
+          "legId": {
+            "type": "string",
+            "description": "The leg identifier.",
+            "example": "C101"
+          },
+          "consumption": {
+            "description": "An object containing the used consumption type.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ConsumptionLiterCaseTransportDTO"
+              },
+              {
+                "$ref": "#/components/schemas/ConsumptionKmPerLiterCaseTransportDTO"
+              }
+            ],
+            "discriminator": {
+              "propertyName": "consumptionType",
+              "mapping": {
+                "l": "#/components/schemas/ConsumptionLiterCaseTransportDTO",
+                "km/l": "#/components/schemas/ConsumptionKmPerLiterCaseTransportDTO"
+              }
+            }
+          },
+          "modality": {
+            "type": "string",
+            "description": "The modality."
+          },
+          "vehicleType": {
+            "type": "string",
+            "description": "The vehicle type."
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "legId",
+          "consumption"
+        ]
+      },
+      "ConsumptionLiterCaseTransportDTO": {
+        "type": "object",
+        "properties": {
+          "consumptionType": {
+            "type": "string",
+            "description": "The consumption calculation type:     \n - Using a fuel quantity in liters (l).     \n - Using a fuel consumption in (km/l) and distance (either actualDistance or plannedDistance needs to be provided).",
+            "enum": [
+              "l",
+              "km/l"
+            ]
+          },
+          "fuelType": {
+            "type": "string",
+            "description": "The fuel type.",
+            "example": "Diesel (Liter)"
+          },
+          "countryCode": {
+            "type": "string",
+            "description": "The location of the transport. Only used in the framework ```GLEC``` and a fueltype related to electricity is used ",
+            "example": "NL"
+          },
+          "year": {
+            "type": "number",
+            "description": "The year of the transport. Only used in the framework ```GLEC``` and a fueltype related to electricity is used ",
+            "example": "2019"
+          },
+          "fuelQuantity": {
+            "type": "number",
+            "description": "Quantity in the unit defined in fuelType.",
+            "example": 800
+          }
+        },
+        "required": [
+          "consumptionType",
+          "fuelType",
+          "fuelQuantity"
+        ]
+      },
+      "ConsumptionKmPerLiterCaseTransportDTO": {
+        "type": "object",
+        "properties": {
+          "consumptionType": {
+            "type": "string",
+            "description": "The consumption calculation type:     \n - Using a fuel quantity in liters (l).     \n - Using a fuel consumption in (km/l) and distance (either actualDistance or plannedDistance needs to be provided).",
+            "enum": [
+              "l",
+              "km/l"
+            ]
+          },
+          "fuelType": {
+            "type": "string",
+            "description": "The fuel type.",
+            "example": "Diesel (Liter)"
+          },
+          "countryCode": {
+            "type": "string",
+            "description": "The location of the transport. Only used in the framework ```GLEC``` and a fueltype related to electricity is used ",
+            "example": "NL"
+          },
+          "year": {
+            "type": "number",
+            "description": "The year of the transport. Only used in the framework ```GLEC``` and a fueltype related to electricity is used ",
+            "example": "2019"
+          },
+          "fuelConsumption": {
+            "type": "number",
+            "description": "Consumption in km per liter.",
+            "example": 800
+          },
+          "actualDistance": {
+            "type": "number",
+            "description": "The actual distance in kilometers (recommended).",
+            "example": 152.34
+          },
+          "plannedDistance": {
+            "type": "number",
+            "description": "The planned distance in kilometers.",
+            "example": 147.8
+          }
+        },
+        "required": [
+          "consumptionType",
+          "fuelType",
+          "fuelConsumption"
+        ]
+      },
+      "IntensityCaseTransportDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The framework name.",
+            "enum": [
+              "GLEC",
+              "NL",
+              "UK"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "description": "The calculation type.",
+            "enum": [
+              "consumption",
+              "intensity",
+              "CO2KPI"
+            ]
+          },
+          "legId": {
+            "type": "string",
+            "description": "The leg identifier.",
+            "example": "C101"
+          },
+          "origin": {
+            "description": "The origin of the consignment",
+            "example": "",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GeoreferenceDTO"
+              }
+            ]
+          },
+          "destination": {
+            "description": "The destination of the consignment",
+            "example": "",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GeoreferenceDTO"
+              }
+            ]
+          },
+          "actualDistance": {
+            "type": "number",
+            "description": "The actual distance in kilometers (recommended).",
+            "example": 152.34
+          },
+          "plannedDistance": {
+            "type": "number",
+            "description": "The planned distance in kilometers.",
+            "example": 147.8
+          },
+          "cargoType": {
+            "type": "string",
+            "description": "The used cargo type."
+          },
+          "modality": {
+            "type": "string",
+            "description": "The modality.",
+            "example": "Road"
+          },
+          "vehicleType": {
+            "type": "string",
+            "description": "The used vehicle type."
+          },
+          "fuelCategory": {
+            "type": "string",
+            "description": "The used fuel category, only relevant in case of GLEC framework."
+          },
+          "loadCharacteristicCategory": {
+            "type": "string",
+            "description": "The used load characteristic category. \n\n> **Note** that this is only applicable for:       \n> - name: `GLEC`       \n> - modality: `Rail`       \n> - Origin and Destination are not in North America       "
+          },
+          "roadCategory": {
+            "type": "string",
+            "description": "The used smartWay road category. \n\n> **Note** that this is only applicable for:       \n> - name: `GLEC`       \n> - modality: `Road`       \n> - Origin or Destination is in North America       "
+          },
+          "unit": {
+            "type": "string",
+            "description": "The unit.",
+            "enum": [
+              "kg",
+              "teu"
+            ],
+            "example": "kg"
+          },
+          "amount": {
+            "type": "number",
+            "description": "The amount shipped (in terms of the unit).",
+            "example": 2350
+          },
+          "temperatureControlled": {
+            "type": "boolean",
+            "description": "Whether or not the cargo/location is temperature controlled. \n\n> **Note** that this is only applicable for name `GLEC` and type `intensity` framework.      \n> The default for `GLEC` `intensity` is `true`"
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "legId",
+          "origin",
+          "destination",
+          "unit",
+          "amount"
+        ]
+      },
+      "CO2KPICaseTransportDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The framework name.",
+            "enum": [
+              "GLEC",
+              "NL",
+              "UK"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "description": "The calculation type.",
+            "enum": [
+              "consumption",
+              "intensity",
+              "CO2KPI"
+            ]
+          },
+          "legId": {
+            "type": "string",
+            "description": "The leg identifier.",
+            "example": "C101"
+          },
+          "origin": {
+            "description": "The origin of the consignment",
+            "example": "",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GeoreferenceDTO"
+              }
+            ]
+          },
+          "destination": {
+            "description": "The destination of the consignment",
+            "example": "",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GeoreferenceDTO"
+              }
+            ]
+          },
+          "actualDistance": {
+            "type": "number",
+            "description": "The actual distance in kilometers (recommended).",
+            "example": 152.34
+          },
+          "plannedDistance": {
+            "type": "number",
+            "description": "The planned distance in kilometers.",
+            "example": 147.8
+          },
+          "modality": {
+            "type": "string",
+            "description": "The modality.",
+            "example": "Road"
+          },
+          "vehicleType": {
+            "type": "string",
+            "description": "The used vehicle type."
+          },
+          "unit": {
+            "type": "string",
+            "description": "The unit.",
+            "enum": [
+              "kg",
+              "teu"
+            ],
+            "example": "kg"
+          },
+          "amount": {
+            "type": "number",
+            "description": "The amount shipped (in terms of the unit).",
+            "example": 2350
+          },
+          "CO2perUnitKM": {
+            "type": "number",
+            "description": "The amount of CO2e WTW emission per unit KM",
+            "example": 0.15
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "legId",
+          "origin",
+          "destination",
+          "unit",
+          "amount",
+          "CO2perUnitKM"
+        ]
+      },
+      "IntensityCaseLocationDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The framework name.",
+            "enum": [
+              "GLEC",
+              "NL",
+              "UK"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "description": "The calculation type.",
+            "enum": [
+              "consumption",
+              "intensity",
+              "CO2KPI"
+            ]
+          },
+          "locationId": {
+            "type": "string",
+            "description": "The location identifier.",
+            "example": "C101"
+          },
+          "amount": {
+            "type": "number",
+            "description": "The amount shipped (in terms of the unit).",
+            "example": 2350
+          },
+          "unit": {
+            "type": "string",
+            "description": "The unit.",
+            "enum": [
+              "kg"
+            ],
+            "example": "kg"
+          },
+          "locationType": {
+            "type": "string",
+            "description": "The used location type.",
+            "example": "Transshipment site"
+          },
+          "conditionedType": {
+            "type": "string",
+            "description": "The used condition type.",
+            "example": "Ambient"
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "locationId",
+          "amount",
+          "unit"
+        ]
+      },
+      "ConsumptionLocationDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The framework name.",
+            "enum": [
+              "GLEC",
+              "NL",
+              "UK"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "description": "The calculation type.",
+            "enum": [
+              "consumption",
+              "intensity",
+              "CO2KPI"
+            ]
+          },
+          "locationId": {
+            "type": "string",
+            "description": "The location identifier.",
+            "example": "C101"
+          },
+          "fuelQuantity": {
+            "type": "number",
+            "description": "Quantity in the unit defined in fuelType.",
+            "example": 800
+          },
+          "fuelType": {
+            "type": "string",
+            "description": "The fuel type.",
+            "example": "Diesel (Liter)"
+          },
+          "countryCode": {
+            "type": "string",
+            "description": "The location of the transport. Only used in the framework ```GLEC``` and a fueltype related to electricity is used ",
+            "example": "NL"
+          },
+          "year": {
+            "type": "number",
+            "description": "The year of the transport. Only used in the framework ```GLEC``` and a fueltype related to electricity is used ",
+            "example": "2019"
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "locationId",
+          "fuelQuantity",
+          "fuelType"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "Authorization": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "Ocp-Apim-Subscription-Key": {
+        "type": "apiKey",
+        "name": "Ocp-Apim-Subscription-Key",
+        "in": "header",
+        "description": "Your subscription key"
+      }
+    }
+  },
+  "security": [
+    {
+      "Authorization": [],
+      "Ocp-Apim-Subscription-Key": []
+    }
+  ]
+}
