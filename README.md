@@ -9,3 +9,7 @@ Click any of the following links for documentation in OpenAPI format.
 - [OFAC](https://nxtport-international.github.io/?api=ofac)
 - [Portcall+](https://nxtport-international.github.io/?api=portcallplus)
 - [UN/LOCODE](https://nxtport-international.github.io/?api=unlocode)
+
+## eECD
+
+- [NiNa Public](https://nxtport-international.github.io/?api=eecd/nina.public)
