@@ -1,0 +1,6306 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Marine Visibility",
+    "version": "v1"
+  },
+  "paths": {
+    "/epc/{messageId}": {
+      "get": {
+        "tags": [
+          "ElectronicPortClearances"
+        ],
+        "summary": "Get EPC message by identifier.",
+        "parameters": [
+          {
+            "name": "messageId",
+            "in": "path",
+            "description": "Message identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EpcResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/epc/{messageId}/voyage-event": {
+      "post": {
+        "tags": [
+          "ElectronicPortClearances"
+        ],
+        "summary": "Add voyage event to EPC message.",
+        "parameters": [
+          {
+            "name": "messageId",
+            "in": "path",
+            "description": "Message identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Voyage event.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoyageEventType"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoyageEventType"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoyageEventType"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ArrivalDraughtType": {
+        "type": "object",
+        "properties": {
+          "aftDraught": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "foreDraught": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "midShipDraught": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AttachmentType": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "URI": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AuthenticatorType": {
+        "type": "object",
+        "properties": {
+          "company": {
+            "type": "string",
+            "nullable": true
+          },
+          "companyId": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactNumbers": {
+            "$ref": "#/components/schemas/CommunicationNumberType"
+          },
+          "person": {
+            "$ref": "#/components/schemas/NameType"
+          },
+          "address": {
+            "$ref": "#/components/schemas/PostalAddressType"
+          },
+          "authenticationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "authenticatorRoleCode": {
+            "$ref": "#/components/schemas/CrewDutyType"
+          },
+          "authenticatorLocation": {
+            "$ref": "#/components/schemas/LocationType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BallastStatusType": {
+        "type": "object",
+        "properties": {
+          "isClean": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BulkCargoListType": {
+        "type": "object",
+        "properties": {
+          "stage": {
+            "type": "string",
+            "nullable": true
+          },
+          "unit": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BulkCargoPartType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BulkCargoPartType": {
+        "type": "object",
+        "properties": {
+          "hatch": {
+            "type": "string",
+            "nullable": true
+          },
+          "quantity": {
+            "$ref": "#/components/schemas/MeasureType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BulkLoadUnloadDataType": {
+        "type": "object",
+        "properties": {
+          "accommodationLadder": {
+            "type": "string",
+            "nullable": true
+          },
+          "cargoHandlingGear": {
+            "type": "string",
+            "nullable": true
+          },
+          "cargoType": {
+            "type": "string",
+            "nullable": true
+          },
+          "checklistCompleted": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "distanceSideToHatch": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "distanceWaterlineToHatch": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "isLoading": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "lengthOfCargoArea": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "mooringLines": {
+            "type": "string",
+            "nullable": true
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "requiredRepairs": {
+            "type": "string",
+            "nullable": true
+          },
+          "specificInstructions": {
+            "type": "string",
+            "nullable": true
+          },
+          "timeForBallasting": {
+            "type": "string",
+            "nullable": true
+          },
+          "totalQuantity": {
+            "$ref": "#/components/schemas/BulkCargoPartType"
+          },
+          "operationPlan": {
+            "$ref": "#/components/schemas/OperationPlanType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BunkersTypeContentType": {
+        "enum": [
+          "HFO",
+          "HFOLS",
+          "IFOLS",
+          "IFOVLS",
+          "LNGLS",
+          "LNGVLS",
+          "LOLS",
+          "LOVLS",
+          "LPG",
+          "MDO",
+          "MDOLS",
+          "MGO",
+          "MGOLS",
+          "IFO",
+          "LNG",
+          "LO",
+          "Other"
+        ],
+        "type": "string"
+      },
+      "CallPurposeCodeContentType": {
+        "enum": [
+          "1",
+          "10",
+          "11",
+          "12",
+          "13",
+          "14",
+          "15",
+          "16",
+          "17",
+          "18",
+          "19",
+          "2",
+          "20",
+          "21",
+          "22",
+          "23",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9"
+        ],
+        "type": "string"
+      },
+      "CallPurposeType": {
+        "type": "object",
+        "properties": {
+          "callPurposeText": {
+            "type": "string",
+            "nullable": true
+          },
+          "callPurposeCode": {
+            "$ref": "#/components/schemas/CallPurposeCodeContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CargoDataType": {
+        "type": "object",
+        "properties": {
+          "consignment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConsignmentType"
+            },
+            "nullable": true
+          },
+          "transportEquipment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TransportEquipmentType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CargoItemType": {
+        "type": "object",
+        "properties": {
+          "itemNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "marksAndNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "noOfPackages": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "noOfUnits": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "sealNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "vehicleIdentificationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "cargoType": {
+            "$ref": "#/components/schemas/CargoTypeContentType"
+          },
+          "goodsType": {
+            "$ref": "#/components/schemas/GoodsTypeType"
+          },
+          "LostDGDetails": {
+            "$ref": "#/components/schemas/LostCargoDetailsType"
+          },
+          "netWeight": {
+            "$ref": "#/components/schemas/MeasureType"
+          },
+          "grossWeight": {
+            "$ref": "#/components/schemas/MeasureType"
+          },
+          "grossVolume": {
+            "$ref": "#/components/schemas/MeasureType"
+          },
+          "packageType": {
+            "$ref": "#/components/schemas/PackageTypeContentType"
+          },
+          "specialCargoDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SpecialCargoDetailsType"
+            },
+            "nullable": true
+          },
+          "transportEquipment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TransportEquipmentType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CargoTypeContentType": {
+        "enum": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9"
+        ],
+        "type": "string"
+      },
+      "CaseDisposalCodeContentType": {
+        "enum": [
+          "B",
+          "E",
+          "S"
+        ],
+        "type": "string"
+      },
+      "CaseOfDisposalType": {
+        "type": "object",
+        "properties": {
+          "caseDisposalCode": {
+            "$ref": "#/components/schemas/CaseDisposalCodeContentType"
+          },
+          "healthStateCode": {
+            "$ref": "#/components/schemas/HealthStateCodeContentType"
+          },
+          "locationOfEvaculation": {
+            "$ref": "#/components/schemas/LocationType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CertificateCodeContentType": {
+        "enum": [
+          "BCHC",
+          "CASCOMP",
+          "CIFBUN",
+          "CIFPAX",
+          "CIFWRE",
+          "CLC",
+          "CLCH",
+          "CLCM",
+          "COR",
+          "CSS",
+          "DIVC",
+          "DOH",
+          "DRC",
+          "DSCCEC",
+          "ESD",
+          "GAD",
+          "GFC",
+          "HSCOP",
+          "HSCS",
+          "IAFSC",
+          "IAPC",
+          "IBCHC",
+          "IBWMC",
+          "IEEC",
+          "ILGCC",
+          "ILO133",
+          "ILO92",
+          "IMDG",
+          "INFC",
+          "INFCSS",
+          "INFPSS",
+          "IOPP",
+          "ISMC",
+          "ISPP",
+          "ISSC",
+          "ITC",
+          "ITF",
+          "LGCC",
+          "LLC",
+          "MOUSC",
+          "MSM",
+          "NLS",
+          "OSVCFO",
+          "OSVDOC",
+          "OTHER",
+          "PANDI",
+          "POLARC",
+          "PSSC",
+          "SCC",
+          "SCCPSC",
+          "SEC",
+          "SMC",
+          "SPSSC",
+          "SRC",
+          "STPSSaC",
+          "STPSSpC",
+          "UPCM",
+          "VDR",
+          "WIGPTO",
+          "WIGSC"
+        ],
+        "type": "string"
+      },
+      "CertificateIssuerTypeContentType": {
+        "enum": [
+          "Flag",
+          "Class",
+          "RO",
+          "RSO",
+          "Other"
+        ],
+        "type": "string"
+      },
+      "CertificateListType": {
+        "type": "object",
+        "properties": {
+          "certificate": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificateType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CertificateStatusContentType": {
+        "enum": [
+          "Approved",
+          "Intermediate",
+          "USCGApproved",
+          "Exemption",
+          "Other"
+        ],
+        "type": "string"
+      },
+      "CertificateType": {
+        "type": "object",
+        "properties": {
+          "certificateNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "expiryDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "extendedUntil": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "issueDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastEndorsementDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "restrictions": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "$ref": "#/components/schemas/CertificateCodeContentType"
+          },
+          "issuerType": {
+            "$ref": "#/components/schemas/CertificateIssuerTypeContentType"
+          },
+          "certificateStatus": {
+            "$ref": "#/components/schemas/CertificateStatusContentType"
+          },
+          "issuer": {
+            "$ref": "#/components/schemas/OrganisationType"
+          },
+          "issuerLocationCode": {
+            "maxLength": 3,
+            "minLength": 3,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ClassSocietyContentType": {
+        "enum": [
+          "ABS",
+          "BKI",
+          "BRS",
+          "BV",
+          "CAR",
+          "CCS",
+          "CMB",
+          "CR",
+          "CRS",
+          "DNVGL",
+          "DR",
+          "GMB",
+          "IB",
+          "ICS",
+          "INSB",
+          "IRS",
+          "IS",
+          "ISC",
+          "KCS",
+          "KRS",
+          "LRS",
+          "MB",
+          "MC",
+          "MG",
+          "MSR",
+          "NKK",
+          "NSA",
+          "OMCS",
+          "OTHER",
+          "PMDS",
+          "PRC",
+          "PRoS",
+          "PRS",
+          "PSR",
+          "RINA",
+          "RMRS",
+          "RSA",
+          "SCI",
+          "SCSM",
+          "SL",
+          "SRU",
+          "TLV",
+          "UBS",
+          "UMB",
+          "VR",
+          "VRS"
+        ],
+        "type": "string"
+      },
+      "CommunicationNumberType": {
+        "type": "object",
+        "properties": {
+          "businessTelephone": {
+            "type": "string",
+            "nullable": true
+          },
+          "EMail": {
+            "type": "string",
+            "nullable": true
+          },
+          "homeTelephone": {
+            "type": "string",
+            "nullable": true
+          },
+          "mobileTelephone": {
+            "type": "string",
+            "nullable": true
+          },
+          "telefax": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CompanyType": {
+        "type": "object",
+        "properties": {
+          "IMOCompanyId": {
+            "type": "string",
+            "nullable": true
+          },
+          "contact": {
+            "$ref": "#/components/schemas/ContactInfoType"
+          },
+          "organisation": {
+            "$ref": "#/components/schemas/OrganisationType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ConsignmentType": {
+        "type": "object",
+        "properties": {
+          "consignmentNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "dangerousGoodsShippersReferenceNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "numberOfItems": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "transportDocumentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "cargoItem": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CargoItemType"
+            },
+            "nullable": true
+          },
+          "consignee": {
+            "$ref": "#/components/schemas/ContactInfoType"
+          },
+          "portOfLoading": {
+            "$ref": "#/components/schemas/LocationType"
+          },
+          "portOfDischarge": {
+            "$ref": "#/components/schemas/LocationType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContactInfoType": {
+        "type": "object",
+        "properties": {
+          "company": {
+            "type": "string",
+            "nullable": true
+          },
+          "companyId": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactNumbers": {
+            "$ref": "#/components/schemas/CommunicationNumberType"
+          },
+          "person": {
+            "$ref": "#/components/schemas/NameType"
+          },
+          "address": {
+            "$ref": "#/components/schemas/PostalAddressType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CountryCodeContentType": {
+        "enum": [
+          "AD",
+          "AE",
+          "AF",
+          "AG",
+          "AI",
+          "AL",
+          "AM",
+          "AO",
+          "AQ",
+          "AR",
+          "AS",
+          "AT",
+          "AU",
+          "AW",
+          "AX",
+          "AZ",
+          "BA",
+          "BB",
+          "BD",
+          "BE",
+          "BF",
+          "BG",
+          "BH",
+          "BI",
+          "BJ",
+          "BL",
+          "BM",
+          "BN",
+          "BO",
+          "BQ",
+          "BR",
+          "BS",
+          "BT",
+          "BV",
+          "BW",
+          "BY",
+          "BZ",
+          "CA",
+          "CC",
+          "CD",
+          "CF",
+          "CG",
+          "CH",
+          "CI",
+          "CK",
+          "CL",
+          "CM",
+          "CN",
+          "CO",
+          "CR",
+          "CU",
+          "CV",
+          "CW",
+          "CX",
+          "CY",
+          "CZ",
+          "DE",
+          "DJ",
+          "DK",
+          "DM",
+          "DO",
+          "DZ",
+          "EC",
+          "EE",
+          "EG",
+          "EH",
+          "ER",
+          "ES",
+          "ET",
+          "FI",
+          "FJ",
+          "FK",
+          "FM",
+          "FO",
+          "FR",
+          "GA",
+          "GB",
+          "GD",
+          "GE",
+          "GF",
+          "GG",
+          "GH",
+          "GI",
+          "GL",
+          "GM",
+          "GN",
+          "GP",
+          "GQ",
+          "GR",
+          "GS",
+          "GT",
+          "GU",
+          "GW",
+          "GY",
+          "HK",
+          "HM",
+          "HN",
+          "HR",
+          "HT",
+          "HU",
+          "ID",
+          "IE",
+          "IL",
+          "IM",
+          "IN",
+          "IO",
+          "IQ",
+          "IR",
+          "IS",
+          "IT",
+          "JE",
+          "JM",
+          "JO",
+          "JP",
+          "KE",
+          "KG",
+          "KH",
+          "KI",
+          "KM",
+          "KN",
+          "KP",
+          "KR",
+          "KW",
+          "KY",
+          "KZ",
+          "LA",
+          "LB",
+          "LC",
+          "LI",
+          "LK",
+          "LR",
+          "LS",
+          "LT",
+          "LU",
+          "LV",
+          "LY",
+          "MA",
+          "MC",
+          "MD",
+          "ME",
+          "MF",
+          "MG",
+          "MH",
+          "MK",
+          "ML",
+          "MM",
+          "MN",
+          "MO",
+          "MP",
+          "MQ",
+          "MR",
+          "MS",
+          "MT",
+          "MU",
+          "MV",
+          "MW",
+          "MX",
+          "MY",
+          "MZ",
+          "NA",
+          "NC",
+          "NE",
+          "NF",
+          "NG",
+          "NI",
+          "NL",
+          "NO",
+          "NP",
+          "NR",
+          "NU",
+          "NZ",
+          "OM",
+          "PA",
+          "PE",
+          "PF",
+          "PG",
+          "PH",
+          "PK",
+          "PL",
+          "PM",
+          "PN",
+          "PR",
+          "PS",
+          "PT",
+          "PW",
+          "PY",
+          "QA",
+          "RE",
+          "RO",
+          "RS",
+          "RU",
+          "RW",
+          "SA",
+          "SB",
+          "SC",
+          "SD",
+          "SE",
+          "SG",
+          "SH",
+          "SI",
+          "SJ",
+          "SK",
+          "SL",
+          "SM",
+          "SN",
+          "SO",
+          "SR",
+          "SS",
+          "ST",
+          "SV",
+          "SX",
+          "SY",
+          "SZ",
+          "TC",
+          "TD",
+          "TF",
+          "TG",
+          "TH",
+          "TJ",
+          "TK",
+          "TL",
+          "TM",
+          "TN",
+          "TO",
+          "TR",
+          "TT",
+          "TV",
+          "TW",
+          "TZ",
+          "UA",
+          "UG",
+          "UM",
+          "US",
+          "UY",
+          "UZ",
+          "VA",
+          "VC",
+          "VE",
+          "VG",
+          "VI",
+          "VN",
+          "VU",
+          "WF",
+          "WS",
+          "YE",
+          "YT",
+          "ZA",
+          "ZM",
+          "ZW"
+        ],
+        "type": "string"
+      },
+      "CrewDutyCodeContentType": {
+        "enum": [
+          "ABS",
+          "AFM",
+          "AGT",
+          "BOS",
+          "BRM",
+          "BRS",
+          "CAD",
+          "CAP",
+          "CAS",
+          "CAT",
+          "CCO",
+          "CDR",
+          "CEL",
+          "CEN",
+          "CFP",
+          "CHK",
+          "CMA",
+          "CMT",
+          "COF",
+          "COO",
+          "CPU",
+          "CRO",
+          "CRS",
+          "CRW",
+          "CSO",
+          "CST",
+          "CSU",
+          "DAP",
+          "DFI",
+          "DHA",
+          "DOC",
+          "DOF",
+          "DOM",
+          "ECA",
+          "ECR",
+          "EFI",
+          "ELC",
+          "ELE",
+          "ELO",
+          "EN2",
+          "EN3",
+          "EN4",
+          "ENT",
+          "FAC",
+          "FAE",
+          "FAM",
+          "FBM",
+          "FEN",
+          "FIT",
+          "FMA",
+          "FOF",
+          "FSC",
+          "GRE",
+          "HKS",
+          "HOD",
+          "HOS",
+          "HSP",
+          "ITC",
+          "JEN",
+          "L",
+          "LAM",
+          "LBM",
+          "MA2",
+          "MA3",
+          "MAS",
+          "MCR",
+          "MDO",
+          "MEC",
+          "MED",
+          "MFP",
+          "MOM",
+          "MRM",
+          "MSM",
+          "OF2",
+          "OF3",
+          "OF4",
+          "OIL",
+          "OPE",
+          "OSM",
+          "OTH",
+          "OWN",
+          "PAI",
+          "POR",
+          "PRM",
+          "PRV",
+          "PUM",
+          "QMD",
+          "RAO",
+          "RDD",
+          "REE",
+          "REP",
+          "SCA",
+          "SSC",
+          "SSO",
+          "STW",
+          "SUI",
+          "TAN",
+          "TPY",
+          "TRM",
+          "TUN",
+          "UTP",
+          "VEI",
+          "WE",
+          "WIP",
+          "YAP"
+        ],
+        "type": "string"
+      },
+      "CrewDutyType": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "$ref": "#/components/schemas/CrewDutyCodeContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CrewEffectCodeContentType": {
+        "enum": [
+          "CBW",
+          "CEAB",
+          "CEAL",
+          "CEAM",
+          "CEAN",
+          "CEBE",
+          "CECA",
+          "CECG",
+          "CECI",
+          "CEEL",
+          "CEFA",
+          "CEME",
+          "CEOT",
+          "CEPE",
+          "CESU",
+          "CETO",
+          "CEWI",
+          "CMH"
+        ],
+        "type": "string"
+      },
+      "CrewEffectItemType": {
+        "type": "object",
+        "properties": {
+          "effectDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "sequenceNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "crewEffectItemCode": {
+            "$ref": "#/components/schemas/CrewEffectCodeContentType"
+          },
+          "measurement": {
+            "$ref": "#/components/schemas/MeasureType"
+          },
+          "crewReference": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CrewListType": {
+        "type": "object",
+        "properties": {
+          "crewMemberData": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CrewMemberDataType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CrewMemberDataType": {
+        "type": "object",
+        "properties": {
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "debarkationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "embarkationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "placeOfBirth": {
+            "type": "string",
+            "nullable": true
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "transit": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "countryOfBirth": {
+            "$ref": "#/components/schemas/CountryCodeContentType"
+          },
+          "nationality": {
+            "$ref": "#/components/schemas/CountryCodeContentType"
+          },
+          "countryOfResidence": {
+            "$ref": "#/components/schemas/CountryCodeContentType"
+          },
+          "gender": {
+            "$ref": "#/components/schemas/GenderContentType"
+          },
+          "name": {
+            "$ref": "#/components/schemas/NameType"
+          },
+          "personHealthParticulars": {
+            "$ref": "#/components/schemas/PersonHealthParticularsType"
+          },
+          "personIdDocument": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PersonIdDocumentType"
+            },
+            "nullable": true
+          },
+          "visaNumber": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PersonIdDocumentType"
+            },
+            "nullable": true
+          },
+          "personReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "embarkationPort": {
+            "$ref": "#/components/schemas/LocationType"
+          },
+          "debarkationPort": {
+            "$ref": "#/components/schemas/LocationType"
+          },
+          "homeAddress": {
+            "$ref": "#/components/schemas/PostalAddressType"
+          },
+          "visitAddress": {
+            "$ref": "#/components/schemas/PostalAddressType"
+          },
+          "duty": {
+            "$ref": "#/components/schemas/CrewDutyType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DateTimeType": {
+        "type": "object",
+        "properties": {
+          "dateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "timeType": {
+            "$ref": "#/components/schemas/TimeTypeContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DepartureDraughtType": {
+        "type": "object",
+        "properties": {
+          "aftDraught": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "foreDraught": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "midShipDraught": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DgClassificationContentType": {
+        "enum": [
+          "IBC",
+          "IGC",
+          "IMDG",
+          "IMSBC",
+          "MARPOL_ANNEX1"
+        ],
+        "type": "string"
+      },
+      "DgInfoType": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "UNNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "MARPOLCode": {
+            "$ref": "#/components/schemas/MarpolPollutionCodeContentType"
+          },
+          "measure": {
+            "$ref": "#/components/schemas/MeasureType"
+          },
+          "UNHazardClass": {
+            "$ref": "#/components/schemas/UnHazardClassContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DgSafetyDataSheetType": {
+        "type": "object",
+        "properties": {
+          "additionalInformation": {
+            "type": "string",
+            "nullable": true
+          },
+          "properShippingName": {
+            "type": "string",
+            "nullable": true
+          },
+          "segregationInformation": {
+            "type": "string",
+            "nullable": true
+          },
+          "technicalSpecification": {
+            "type": "string",
+            "nullable": true
+          },
+          "UNNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "DGClassification": {
+            "$ref": "#/components/schemas/DgClassificationContentType"
+          },
+          "emergencyInstruction": {
+            "$ref": "#/components/schemas/EmergencyInstructionContentType"
+          },
+          "MARPOLPollutionCode": {
+            "$ref": "#/components/schemas/MarpolPollutionCodeContentType"
+          },
+          "mass": {
+            "$ref": "#/components/schemas/MeasureType"
+          },
+          "volume": {
+            "$ref": "#/components/schemas/MeasureType"
+          },
+          "flashPoint": {
+            "$ref": "#/components/schemas/MeasureType"
+          },
+          "packingGroup": {
+            "$ref": "#/components/schemas/PackingGroupCodeContentType"
+          },
+          "UNClass": {
+            "$ref": "#/components/schemas/UnHazardClassContentType"
+          },
+          "subsidiaryRisks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UnHazardClassContentType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DoubleBottomContentType": {
+        "enum": [
+          "DoubleHull",
+          "DoubleBottom",
+          "SingleHull"
+        ],
+        "type": "string"
+      },
+      "DutiableCrewEffectsType": {
+        "type": "object",
+        "properties": {
+          "crewEffectItem": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CrewEffectItemType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EmergencyInstructionContentType": {
+        "enum": [
+          "F-A",
+          "F-B",
+          "F-C",
+          "F-D",
+          "F-E",
+          "F-F",
+          "F-G",
+          "F-H",
+          "F-I",
+          "F-J",
+          "F-K",
+          "F-L",
+          "F-M",
+          "F-N",
+          "F-O",
+          "F-P",
+          "F-Q",
+          "F-R",
+          "F-S",
+          "F-T",
+          "F-U",
+          "F-V",
+          "F-W",
+          "F-X",
+          "F-Y",
+          "F-Z",
+          "S-A",
+          "S-B",
+          "S-C",
+          "S-D",
+          "S-E",
+          "S-F",
+          "S-G",
+          "S-H",
+          "S-I",
+          "S-J",
+          "S-K",
+          "S-L",
+          "S-M",
+          "S-N",
+          "S-O",
+          "S-P",
+          "S-Q",
+          "S-R",
+          "S-S",
+          "S-T",
+          "S-U",
+          "S-V",
+          "S-W",
+          "S-X",
+          "S-Y",
+          "S-Z"
+        ],
+        "type": "string"
+      },
+      "EpcAcknowledgeBodyType": {
+        "type": "object",
+        "properties": {
+          "EPCClearanceStatus": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EpcClearanceStatusType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EpcCancelBodyType": {
+        "type": "object",
+        "properties": {
+          "cancel": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EpcClearanceStatusType": {
+        "type": "object",
+        "properties": {
+          "authority": {
+            "type": "string",
+            "nullable": true
+          },
+          "requestStatus": {
+            "$ref": "#/components/schemas/RequestStatusType"
+          },
+          "UsesSW": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EpcMessage": {
+        "type": "object",
+        "properties": {
+          "EPCMessageHeader": {
+            "$ref": "#/components/schemas/EpcMessageHeaderType"
+          },
+          "EPCComment": {
+            "type": "string",
+            "nullable": true
+          },
+          "EPCAcknowledgeBody": {
+            "$ref": "#/components/schemas/EpcAcknowledgeBodyType"
+          },
+          "EPCCancelBody": {
+            "$ref": "#/components/schemas/EpcCancelBodyType"
+          },
+          "EPCReceiptBody": {
+            "$ref": "#/components/schemas/EpcReceiptBodyType"
+          },
+          "EPCRequestBody": {
+            "$ref": "#/components/schemas/EpcRequestBody"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EpcMessageHeaderType": {
+        "type": "object",
+        "properties": {
+          "messageId": {
+            "type": "string",
+            "nullable": true
+          },
+          "ReplyURI": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "senderId": {
+            "type": "string",
+            "nullable": true
+          },
+          "sentTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "arrivalDeparture": {
+            "type": "string",
+            "nullable": true
+          },
+          "authenticator": {
+            "$ref": "#/components/schemas/AuthenticatorType"
+          },
+          "sender": {
+            "$ref": "#/components/schemas/ContactInfoType"
+          },
+          "senderDuty": {
+            "$ref": "#/components/schemas/CrewDutyType"
+          },
+          "journalNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "messageType": {
+            "$ref": "#/components/schemas/MessageTypeContentType"
+          },
+          "reportingSystem": {
+            "type": "string",
+            "nullable": true
+          },
+          "relayReportingSystem": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "version": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EpcReceiptBodyType": {
+        "type": "object",
+        "properties": {
+          "currentPortSecurityLevel": {
+            "$ref": "#/components/schemas/SecurityLevelContentType"
+          },
+          "requestErrorCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "requestProcessed": {
+            "type": "boolean"
+          },
+          "requestStatus": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RequestStatusTypeContentType"
+            },
+            "nullable": true
+          },
+          "EPCClearanceStatus": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EpcClearanceStatusType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EpcRequestBody": {
+        "type": "object",
+        "properties": {
+          "agent": {
+            "$ref": "#/components/schemas/ContactInfoType"
+          },
+          "airDraught": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "anchorageArrival": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationCallType"
+            },
+            "nullable": true
+          },
+          "anchorageDeparture": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationCallType"
+            },
+            "nullable": true
+          },
+          "arrivalDraught": {
+            "$ref": "#/components/schemas/ArrivalDraughtType"
+          },
+          "ATP": {
+            "$ref": "#/components/schemas/DateTimeType"
+          },
+          "authenticator": {
+            "$ref": "#/components/schemas/AuthenticatorType"
+          },
+          "ballastStatus": {
+            "$ref": "#/components/schemas/BallastStatusType"
+          },
+          "beam": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "berthArrival": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationCallType"
+            },
+            "nullable": true
+          },
+          "berthDeparture": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationCallType"
+            },
+            "nullable": true
+          },
+          "berthPositionArrival": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationCallType"
+            },
+            "nullable": true
+          },
+          "berthPositionDeparture": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationCallType"
+            },
+            "nullable": true
+          },
+          "bulkLoadUnloadData": {
+            "$ref": "#/components/schemas/BulkLoadUnloadDataType"
+          },
+          "callPurpose": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CallPurposeType"
+            },
+            "nullable": true
+          },
+          "cargoData": {
+            "$ref": "#/components/schemas/CargoDataType"
+          },
+          "cargoOverview": {
+            "type": "string",
+            "nullable": true
+          },
+          "certificateList": {
+            "$ref": "#/components/schemas/CertificateListType"
+          },
+          "company": {
+            "$ref": "#/components/schemas/CompanyType"
+          },
+          "crewList": {
+            "$ref": "#/components/schemas/CrewListType"
+          },
+          "CSO": {
+            "$ref": "#/components/schemas/ContactInfoType"
+          },
+          "currentPortSecurityLevel": {
+            "$ref": "#/components/schemas/SecurityLevelContentType"
+          },
+          "currentShipSecurityLevel": {
+            "$ref": "#/components/schemas/SecurityLevelContentType"
+          },
+          "dangerousGoodsCargoIndicator": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "deadWeight": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "departureDraught": {
+            "$ref": "#/components/schemas/DepartureDraughtType"
+          },
+          "doubleBottomContent": {
+            "$ref": "#/components/schemas/DoubleBottomContentType"
+          },
+          "dutiableCrewEffects": {
+            "$ref": "#/components/schemas/DutiableCrewEffectsType"
+          },
+          "ETP": {
+            "$ref": "#/components/schemas/DateTimeType"
+          },
+          "facilityArrival": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationCallType"
+            },
+            "nullable": true
+          },
+          "facilityDeparture": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationCallType"
+            },
+            "nullable": true
+          },
+          "GeneralDescriptionOfDG": {
+            "$ref": "#/components/schemas/GeneralDescriptionOfDgType"
+          },
+          "generalRemark": {
+            "type": "string",
+            "nullable": true
+          },
+          "grossTonnage": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "hasSecurityPlan": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "healthData": {
+            "$ref": "#/components/schemas/HealthDataType"
+          },
+          "iceClass": {
+            "$ref": "#/components/schemas/IceClassType"
+          },
+          "INFClassContent": {
+            "$ref": "#/components/schemas/InfClassContentType"
+          },
+          "inmarsatCallNumber": {
+            "$ref": "#/components/schemas/InmarsatCallNumberType"
+          },
+          "ISSCertificateStatus": {
+            "$ref": "#/components/schemas/IssCertificateStatusType"
+          },
+          "lastPortOfCall": {
+            "$ref": "#/components/schemas/LocationCallType"
+          },
+          "lengthOverall": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "navigationalStatus": {
+            "$ref": "#/components/schemas/NavigationalStatusContentType"
+          },
+          "netTonnage": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "nextPortOfCall": {
+            "$ref": "#/components/schemas/LocationCallType"
+          },
+          "nextReportTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "OBOLoadUnloadData": {
+            "$ref": "#/components/schemas/OboLoadUnloadDataType"
+          },
+          "otherPersonList": {
+            "$ref": "#/components/schemas/OtherPersonListType"
+          },
+          "otherServiceRequest": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OtherServiceRequestType"
+            },
+            "nullable": true
+          },
+          "passengerList": {
+            "$ref": "#/components/schemas/PassengerListType"
+          },
+          "periodOfStay": {
+            "type": "string",
+            "nullable": true
+          },
+          "personsOnboard": {
+            "$ref": "#/components/schemas/PersonsOnboardNumberType"
+          },
+          "portCallList": {
+            "$ref": "#/components/schemas/PortCallListType"
+          },
+          "portOfArrival": {
+            "$ref": "#/components/schemas/LocationCallType"
+          },
+          "portOfDeparture": {
+            "$ref": "#/components/schemas/LocationCallType"
+          },
+          "radioCommunications": {
+            "type": "string",
+            "nullable": true
+          },
+          "reportingEvent": {
+            "$ref": "#/components/schemas/LocationCallType"
+          },
+          "requestStatus": {
+            "$ref": "#/components/schemas/RequestStatusType"
+          },
+          "ROBBunkers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RobBunkersType"
+            },
+            "nullable": true
+          },
+          "securityOtherMattersToReport": {
+            "type": "string",
+            "nullable": true
+          },
+          "shipClass": {
+            "$ref": "#/components/schemas/ShipClassType"
+          },
+          "shipDefects": {
+            "$ref": "#/components/schemas/ShipDefectsType"
+          },
+          "ShipID": {
+            "$ref": "#/components/schemas/ShipIdType"
+          },
+          "shipStatus": {
+            "$ref": "#/components/schemas/ShipStatusType"
+          },
+          "shipStore": {
+            "$ref": "#/components/schemas/ShipStoreType"
+          },
+          "shipToShipActivityList": {
+            "$ref": "#/components/schemas/ShipToShipActivityListType"
+          },
+          "shipType": {
+            "$ref": "#/components/schemas/ShipTypeContentType"
+          },
+          "summerDraught": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "terminalArrival": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationCallType"
+            },
+            "nullable": true
+          },
+          "terminalDeparture": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationCallType"
+            },
+            "nullable": true
+          },
+          "voyageDescription": {
+            "$ref": "#/components/schemas/VoyageDescriptionType"
+          },
+          "voyageEvent": {
+            "$ref": "#/components/schemas/VoyageEventListType"
+          },
+          "voyageNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "wasteDisposalRequirements": {
+            "type": "string",
+            "nullable": true
+          },
+          "wasteInformation": {
+            "$ref": "#/components/schemas/WasteInformationType"
+          },
+          "wayPointList": {
+            "$ref": "#/components/schemas/WaypointListType"
+          },
+          "weatherInformation": {
+            "$ref": "#/components/schemas/WeatherInformationType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EpcResponse": {
+        "type": "object",
+        "properties": {
+          "EPCMessage": {
+            "$ref": "#/components/schemas/EpcMessage"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GenderContentType": {
+        "enum": [
+          "Male",
+          "Female",
+          "Not known",
+          "Not applicable"
+        ],
+        "type": "string"
+      },
+      "GeneralDescriptionOfDgType": {
+        "type": "object",
+        "properties": {
+          "DGInfo": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DgInfoType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GoodsTypeType": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "HSCode": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HealthDataType": {
+        "type": "object",
+        "properties": {
+          "diseaseOnBoard": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "illPersonsGreaterThanExpected": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "illPersonsNow": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "infectionConditionOnBoard": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "medicalConsulted": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "numberOfDeaths": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "numberOfIllPersons": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "personDied": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "reInspectionRequired": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "sanitaryMeasureApplied": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "sickAnimal": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "stowawaysFound": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "validShipSanitationControlCertificate": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "validShipSanitationControlExemptionCertificate": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "visitedInfectedArea": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "shipSanitationControlExemptionCertificate": {
+            "$ref": "#/components/schemas/CertificateType"
+          },
+          "shipSanitationControlCertificate": {
+            "$ref": "#/components/schemas/CertificateType"
+          },
+          "locationStowawaysJoinedShip": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationType"
+            },
+            "nullable": true
+          },
+          "sanitaryMeasure": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SanitaryMeasureType"
+            },
+            "nullable": true
+          },
+          "callInInfectedArea": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipToPortActivityType"
+            },
+            "nullable": true
+          },
+          "lastPortCalls": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipToPortActivityType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HealthStateCodeContentType": {
+        "enum": [
+          "D",
+          "I",
+          "R"
+        ],
+        "type": "string"
+      },
+      "IceClassBalticContentType": {
+        "enum": [
+          "A1",
+          "A1Super",
+          "B1",
+          "C1",
+          "II"
+        ],
+        "type": "string"
+      },
+      "IceClassType": {
+        "type": "object",
+        "properties": {
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "balticIceClass": {
+            "$ref": "#/components/schemas/IceClassBalticContentType"
+          },
+          "polarClass": {
+            "$ref": "#/components/schemas/PolarClassContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "IdDocumentCodeContentType": {
+        "enum": [
+          "1",
+          "10",
+          "100",
+          "101",
+          "102",
+          "103",
+          "104",
+          "105",
+          "106",
+          "107",
+          "108",
+          "109",
+          "11",
+          "110",
+          "111",
+          "112",
+          "113",
+          "114",
+          "115",
+          "116",
+          "117",
+          "118",
+          "119",
+          "12",
+          "120",
+          "121",
+          "122",
+          "123",
+          "124",
+          "125",
+          "126",
+          "127",
+          "128",
+          "129",
+          "13",
+          "130",
+          "131",
+          "132",
+          "133",
+          "134",
+          "135",
+          "136",
+          "137",
+          "138",
+          "139",
+          "14",
+          "140",
+          "141",
+          "142",
+          "143",
+          "144",
+          "145",
+          "146",
+          "147",
+          "148",
+          "149",
+          "15",
+          "150",
+          "151",
+          "152",
+          "153",
+          "154",
+          "155",
+          "156",
+          "157",
+          "158",
+          "159",
+          "16",
+          "160",
+          "161",
+          "162",
+          "163",
+          "164",
+          "165",
+          "166",
+          "167",
+          "168",
+          "169",
+          "17",
+          "170",
+          "171",
+          "172",
+          "173",
+          "174",
+          "175",
+          "176",
+          "177",
+          "178",
+          "179",
+          "18",
+          "180",
+          "181",
+          "182",
+          "183",
+          "184",
+          "185",
+          "186",
+          "187",
+          "188",
+          "189",
+          "19",
+          "190",
+          "191",
+          "192",
+          "193",
+          "194",
+          "195",
+          "196",
+          "197",
+          "198",
+          "199",
+          "2",
+          "20",
+          "200",
+          "201",
+          "202",
+          "203",
+          "204",
+          "205",
+          "206",
+          "207",
+          "208",
+          "209",
+          "21",
+          "210",
+          "211",
+          "212",
+          "213",
+          "214",
+          "215",
+          "216",
+          "217",
+          "218",
+          "219",
+          "22",
+          "220",
+          "221",
+          "222",
+          "223",
+          "224",
+          "225",
+          "226",
+          "227",
+          "228",
+          "229",
+          "23",
+          "230",
+          "231",
+          "232",
+          "233",
+          "234",
+          "235",
+          "236",
+          "237",
+          "238",
+          "239",
+          "24",
+          "240",
+          "241",
+          "242",
+          "243",
+          "244",
+          "245",
+          "246",
+          "247",
+          "248",
+          "249",
+          "25",
+          "250",
+          "251",
+          "252",
+          "253",
+          "254",
+          "255",
+          "256",
+          "257",
+          "258",
+          "259",
+          "26",
+          "260",
+          "261",
+          "262",
+          "263",
+          "264",
+          "265",
+          "266",
+          "267",
+          "268",
+          "269",
+          "27",
+          "270",
+          "271",
+          "272",
+          "273",
+          "274",
+          "275",
+          "276",
+          "277",
+          "278",
+          "279",
+          "28",
+          "280",
+          "281",
+          "282",
+          "283",
+          "284",
+          "285",
+          "286",
+          "287",
+          "288",
+          "289",
+          "29",
+          "290",
+          "291",
+          "292",
+          "293",
+          "294",
+          "295",
+          "296",
+          "297",
+          "298",
+          "299",
+          "3",
+          "30",
+          "300",
+          "301",
+          "302",
+          "303",
+          "304",
+          "305",
+          "306",
+          "307",
+          "308",
+          "309",
+          "31",
+          "310",
+          "311",
+          "312",
+          "313",
+          "314",
+          "315",
+          "316",
+          "317",
+          "318",
+          "319",
+          "32",
+          "320",
+          "321",
+          "322",
+          "323",
+          "324",
+          "325",
+          "326",
+          "327",
+          "328",
+          "329",
+          "33",
+          "330",
+          "331",
+          "332",
+          "333",
+          "334",
+          "335",
+          "336",
+          "337",
+          "338",
+          "339",
+          "34",
+          "340",
+          "341",
+          "342",
+          "343",
+          "344",
+          "345",
+          "346",
+          "347",
+          "348",
+          "349",
+          "35",
+          "350",
+          "351",
+          "352",
+          "353",
+          "354",
+          "355",
+          "356",
+          "357",
+          "358",
+          "359",
+          "36",
+          "37",
+          "370",
+          "371",
+          "372",
+          "373",
+          "374",
+          "375",
+          "376",
+          "377",
+          "378",
+          "379",
+          "38",
+          "380",
+          "381",
+          "382",
+          "383",
+          "384",
+          "385",
+          "386",
+          "387",
+          "388",
+          "389",
+          "39",
+          "390",
+          "391",
+          "392",
+          "393",
+          "394",
+          "395",
+          "396",
+          "397",
+          "398",
+          "399",
+          "4",
+          "40",
+          "400",
+          "401",
+          "402",
+          "403",
+          "404",
+          "405",
+          "406",
+          "407",
+          "408",
+          "409",
+          "41",
+          "410",
+          "411",
+          "412",
+          "413",
+          "414",
+          "42",
+          "425",
+          "426",
+          "427",
+          "428",
+          "429",
+          "43",
+          "430",
+          "431",
+          "432",
+          "433",
+          "434",
+          "435",
+          "436",
+          "44",
+          "447",
+          "448",
+          "449",
+          "45",
+          "450",
+          "451",
+          "452",
+          "453",
+          "454",
+          "455",
+          "456",
+          "457",
+          "458",
+          "459",
+          "46",
+          "460",
+          "461",
+          "462",
+          "463",
+          "464",
+          "465",
+          "466",
+          "467",
+          "468",
+          "469",
+          "47",
+          "470",
+          "48",
+          "481",
+          "482",
+          "483",
+          "484",
+          "485",
+          "486",
+          "487",
+          "488",
+          "489",
+          "49",
+          "490",
+          "491",
+          "493",
+          "494",
+          "5",
+          "50",
+          "51",
+          "52",
+          "520",
+          "53",
+          "530",
+          "54",
+          "55",
+          "550",
+          "56",
+          "57",
+          "575",
+          "58",
+          "580",
+          "59",
+          "6",
+          "60",
+          "61",
+          "610",
+          "62",
+          "621",
+          "622",
+          "623",
+          "624",
+          "63",
+          "630",
+          "631",
+          "632",
+          "633",
+          "635",
+          "64",
+          "640",
+          "65",
+          "650",
+          "655",
+          "66",
+          "67",
+          "68",
+          "69",
+          "7",
+          "70",
+          "700",
+          "701",
+          "702",
+          "703",
+          "704",
+          "705",
+          "706",
+          "707",
+          "708",
+          "709",
+          "71",
+          "710",
+          "711",
+          "712",
+          "713",
+          "714",
+          "715",
+          "716",
+          "72",
+          "720",
+          "722",
+          "723",
+          "724",
+          "73",
+          "730",
+          "74",
+          "740",
+          "741",
+          "743",
+          "744",
+          "745",
+          "746",
+          "75",
+          "750",
+          "76",
+          "760",
+          "761",
+          "763",
+          "764",
+          "765",
+          "766",
+          "77",
+          "770",
+          "775",
+          "78",
+          "780",
+          "781",
+          "782",
+          "783",
+          "784",
+          "785",
+          "786",
+          "787",
+          "788",
+          "789",
+          "79",
+          "790",
+          "791",
+          "792",
+          "793",
+          "794",
+          "795",
+          "796",
+          "797",
+          "798",
+          "799",
+          "8",
+          "80",
+          "81",
+          "810",
+          "811",
+          "812",
+          "82",
+          "820",
+          "821",
+          "822",
+          "823",
+          "824",
+          "825",
+          "83",
+          "830",
+          "833",
+          "84",
+          "840",
+          "841",
+          "85",
+          "850",
+          "851",
+          "852",
+          "853",
+          "855",
+          "856",
+          "86",
+          "860",
+          "861",
+          "862",
+          "863",
+          "864",
+          "865",
+          "87",
+          "870",
+          "88",
+          "89",
+          "890",
+          "895",
+          "896",
+          "9",
+          "90",
+          "901",
+          "91",
+          "910",
+          "911",
+          "913",
+          "914",
+          "915",
+          "916",
+          "917",
+          "92",
+          "925",
+          "926",
+          "927",
+          "929",
+          "93",
+          "930",
+          "931",
+          "932",
+          "933",
+          "934",
+          "935",
+          "936",
+          "937",
+          "938",
+          "94",
+          "940",
+          "941",
+          "95",
+          "950",
+          "951",
+          "952",
+          "953",
+          "954",
+          "955",
+          "96",
+          "960",
+          "961",
+          "962",
+          "963",
+          "964",
+          "965",
+          "966",
+          "97",
+          "970",
+          "976",
+          "977",
+          "978",
+          "979",
+          "98",
+          "99",
+          "990",
+          "991",
+          "995",
+          "996",
+          "998"
+        ],
+        "type": "string"
+      },
+      "IllnessCodeContentType": {
+        "enum": [
+          "Asymptomatic",
+          "Chronic condition",
+          "Convulsions",
+          "Decreased consciousness",
+          "Diarrhea",
+          "Difficulty breathing",
+          "Eye redness",
+          "Fever",
+          "Glandular swelling",
+          "Headache",
+          "Injury",
+          "Jaundice",
+          "Neck stiffness",
+          "Obviously unwell",
+          "Other",
+          "Paralysis",
+          "Persistent cough",
+          "Prostration",
+          "Recent onset of focal weakness",
+          "Runny nose",
+          "Skin Eruption",
+          "Skin Rash",
+          "Sore throat",
+          "Swollen glands",
+          "Unusual bleeding",
+          "Vomitting"
+        ],
+        "type": "string"
+      },
+      "InfClassContentType": {
+        "enum": [
+          "INF0",
+          "INF1",
+          "INF2",
+          "INF3"
+        ],
+        "type": "string"
+      },
+      "InmarsatCallNumberType": {
+        "type": "object",
+        "properties": {
+          "alternative": {
+            "type": "string",
+            "nullable": true
+          },
+          "inmarsat": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "IssCertificateStatusReasonNotValidCodeContentType": {
+        "enum": [
+          "101",
+          "102",
+          "103",
+          "104",
+          "105"
+        ],
+        "type": "string"
+      },
+      "IssCertificateStatusType": {
+        "type": "object",
+        "properties": {
+          "ISSCertificateStatusReasonNotValid": {
+            "type": "string",
+            "nullable": true
+          },
+          "ISSCStatus": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "ISSCertificateStatusReasonNotValidCode": {
+            "$ref": "#/components/schemas/IssCertificateStatusReasonNotValidCodeContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LocationCallType": {
+        "type": "object",
+        "properties": {
+          "arrivalTime": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DateTimeType"
+            },
+            "nullable": true
+          },
+          "departureTime": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DateTimeType"
+            },
+            "nullable": true
+          },
+          "location": {
+            "$ref": "#/components/schemas/LocationType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LocationType": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryCode": {
+            "$ref": "#/components/schemas/CountryCodeContentType"
+          },
+          "facilityName": {
+            "type": "string",
+            "nullable": true
+          },
+          "facilityCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "GLN": {
+            "type": "string",
+            "nullable": true
+          },
+          "position": {
+            "$ref": "#/components/schemas/PositionType"
+          },
+          "UNLoCode": {
+            "maxLength": 3,
+            "minLength": 3,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LostCargoDetailsType": {
+        "type": "object",
+        "properties": {
+          "causeOfLoss": {
+            "type": "string",
+            "nullable": true
+          },
+          "estimatedArea": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "estimatedMovement": {
+            "type": "string",
+            "nullable": true
+          },
+          "goodsCondition": {
+            "type": "string",
+            "nullable": true
+          },
+          "lossContinuing": {
+            "type": "boolean"
+          },
+          "lostGoodsStatus": {
+            "$ref": "#/components/schemas/LostGoodsStatusContentType"
+          },
+          "estimatedGoodsLost": {
+            "$ref": "#/components/schemas/MeasureType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LostGoodsStatusContentType": {
+        "enum": [
+          "Floated",
+          "Sank"
+        ],
+        "type": "string"
+      },
+      "MarpolPollutionCodeContentType": {
+        "enum": [
+          "O",
+          "P",
+          "X",
+          "Y",
+          "Z"
+        ],
+        "type": "string"
+      },
+      "MeasureType": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "number",
+            "format": "double"
+          },
+          "unitCode": {
+            "$ref": "#/components/schemas/MeasurementUnitContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MeasurementUnitContentType": {
+        "enum": [
+          "22",
+          "23",
+          "25",
+          "28",
+          "2A",
+          "2B",
+          "2C",
+          "2I",
+          "2J",
+          "2K",
+          "2L",
+          "2M",
+          "2N",
+          "2Q",
+          "2R",
+          "2U",
+          "2X",
+          "2Y",
+          "2Z",
+          "33",
+          "34",
+          "35",
+          "36",
+          "37",
+          "3B",
+          "40",
+          "41",
+          "4C",
+          "4G",
+          "4H",
+          "4K",
+          "4M",
+          "4N",
+          "4O",
+          "4P",
+          "4Q",
+          "4R",
+          "4T",
+          "4U",
+          "4W",
+          "4X",
+          "5A",
+          "5I",
+          "74",
+          "77",
+          "80",
+          "81",
+          "84",
+          "85",
+          "87",
+          "89",
+          "91",
+          "A1",
+          "A10",
+          "A11",
+          "A12",
+          "A13",
+          "A14",
+          "A15",
+          "A16",
+          "A17",
+          "A18",
+          "A19",
+          "A2",
+          "A20",
+          "A21",
+          "A22",
+          "A23",
+          "A24",
+          "A25",
+          "A26",
+          "A27",
+          "A28",
+          "A29",
+          "A3",
+          "A30",
+          "A31",
+          "A32",
+          "A33",
+          "A34",
+          "A35",
+          "A36",
+          "A37",
+          "A38",
+          "A39",
+          "A4",
+          "A40",
+          "A41",
+          "A42",
+          "A44",
+          "A45",
+          "A48",
+          "A5",
+          "A50",
+          "A51",
+          "A52",
+          "A53",
+          "A54",
+          "A55",
+          "A56",
+          "A57",
+          "A58",
+          "A6",
+          "A60",
+          "A61",
+          "A62",
+          "A63",
+          "A64",
+          "A65",
+          "A66",
+          "A67",
+          "A68",
+          "A69",
+          "A7",
+          "A70",
+          "A71",
+          "A73",
+          "A74",
+          "A76",
+          "A8",
+          "A84",
+          "A85",
+          "A86",
+          "A87",
+          "A88",
+          "A89",
+          "A90",
+          "A91",
+          "A93",
+          "A94",
+          "A95",
+          "A96",
+          "A97",
+          "A98",
+          "ACR",
+          "AE",
+          "AK",
+          "AMH",
+          "AMP",
+          "ANN",
+          "APZ",
+          "ARE",
+          "ATM",
+          "ATT",
+          "AWG",
+          "AZ",
+          "B11",
+          "B12",
+          "B13",
+          "B14",
+          "B15",
+          "B16",
+          "B18",
+          "B20",
+          "B21",
+          "B22",
+          "B23",
+          "B24",
+          "B25",
+          "B26",
+          "B27",
+          "B28",
+          "B29",
+          "B31",
+          "B32",
+          "B33",
+          "B34",
+          "B35",
+          "B36",
+          "B37",
+          "B38",
+          "B39",
+          "B40",
+          "B41",
+          "B42",
+          "B43",
+          "B44",
+          "B45",
+          "B46",
+          "B47",
+          "B48",
+          "B49",
+          "B50",
+          "B51",
+          "B52",
+          "B53",
+          "B54",
+          "B55",
+          "B56",
+          "B57",
+          "B58",
+          "B59",
+          "B60",
+          "B61",
+          "B62",
+          "B63",
+          "B64",
+          "B66",
+          "B67",
+          "B69",
+          "B70",
+          "B71",
+          "B72",
+          "B73",
+          "B74",
+          "B75",
+          "B76",
+          "B77",
+          "B78",
+          "B79",
+          "B8",
+          "B81",
+          "B83",
+          "B84",
+          "B85",
+          "B86",
+          "B87",
+          "B88",
+          "B89",
+          "B90",
+          "B91",
+          "B92",
+          "B93",
+          "B94",
+          "B95",
+          "B96",
+          "B97",
+          "B98",
+          "B99",
+          "BAR",
+          "BHP",
+          "BLD",
+          "BLL",
+          "BQL",
+          "BTU",
+          "BUA",
+          "BUI",
+          "C10",
+          "C11",
+          "C12",
+          "C13",
+          "C14",
+          "C15",
+          "C16",
+          "C17",
+          "C18",
+          "C19",
+          "C20",
+          "C22",
+          "C23",
+          "C24",
+          "C25",
+          "C26",
+          "C27",
+          "C28",
+          "C29",
+          "C3",
+          "C30",
+          "C31",
+          "C32",
+          "C33",
+          "C34",
+          "C35",
+          "C36",
+          "C38",
+          "C39",
+          "C40",
+          "C41",
+          "C42",
+          "C43",
+          "C44",
+          "C45",
+          "C46",
+          "C47",
+          "C48",
+          "C49",
+          "C50",
+          "C51",
+          "C52",
+          "C53",
+          "C54",
+          "C55",
+          "C56",
+          "C57",
+          "C58",
+          "C59",
+          "C60",
+          "C61",
+          "C62",
+          "C63",
+          "C64",
+          "C65",
+          "C66",
+          "C67",
+          "C68",
+          "C69",
+          "C7",
+          "C70",
+          "C71",
+          "C72",
+          "C73",
+          "C75",
+          "C76",
+          "C78",
+          "C8",
+          "C80",
+          "C81",
+          "C82",
+          "C83",
+          "C84",
+          "C85",
+          "C86",
+          "C87",
+          "C88",
+          "C89",
+          "C90",
+          "C91",
+          "C92",
+          "C93",
+          "C94",
+          "C95",
+          "C96",
+          "C97",
+          "C98",
+          "C99",
+          "CDL",
+          "CEL",
+          "CGM",
+          "CKG",
+          "CLT",
+          "CMK",
+          "CMQ",
+          "CMT",
+          "COU",
+          "CUR",
+          "CWA",
+          "CWI",
+          "D1",
+          "D10",
+          "D12",
+          "D13",
+          "D15",
+          "D16",
+          "D17",
+          "D18",
+          "D19",
+          "D2",
+          "D20",
+          "D21",
+          "D22",
+          "D24",
+          "D25",
+          "D26",
+          "D27",
+          "D29",
+          "D30",
+          "D31",
+          "D32",
+          "D33",
+          "D35",
+          "D37",
+          "D38",
+          "D39",
+          "D41",
+          "D42",
+          "D43",
+          "D44",
+          "D45",
+          "D46",
+          "D47",
+          "D48",
+          "D49",
+          "D5",
+          "D50",
+          "D51",
+          "D52",
+          "D53",
+          "D54",
+          "D55",
+          "D56",
+          "D57",
+          "D58",
+          "D59",
+          "D6",
+          "D60",
+          "D61",
+          "D62",
+          "D69",
+          "D70",
+          "D71",
+          "D72",
+          "D73",
+          "D74",
+          "D75",
+          "D76",
+          "D77",
+          "D80",
+          "D81",
+          "D82",
+          "D83",
+          "D85",
+          "D86",
+          "D87",
+          "D88",
+          "D89",
+          "D9",
+          "D91",
+          "D93",
+          "D94",
+          "D95",
+          "DAA",
+          "DAY",
+          "DD",
+          "DG",
+          "DJ",
+          "DLT",
+          "DMA",
+          "DMK",
+          "DMQ",
+          "DMT",
+          "DN",
+          "DTN",
+          "DU",
+          "DX",
+          "E01",
+          "E09",
+          "E14",
+          "E15",
+          "E18",
+          "E41",
+          "E42",
+          "E43",
+          "E45",
+          "E92",
+          "E93",
+          "E94",
+          "E95",
+          "E96",
+          "E97",
+          "E98",
+          "E99",
+          "F02",
+          "F03",
+          "F04",
+          "F05",
+          "F06",
+          "F07",
+          "F08",
+          "F10",
+          "F11",
+          "F12",
+          "F13",
+          "F14",
+          "F15",
+          "F16",
+          "F17",
+          "F18",
+          "F19",
+          "F20",
+          "F21",
+          "F22",
+          "F23",
+          "F24",
+          "F25",
+          "F26",
+          "F27",
+          "F28",
+          "F29",
+          "F30",
+          "F31",
+          "F32",
+          "F33",
+          "F34",
+          "F35",
+          "F36",
+          "F37",
+          "F38",
+          "F39",
+          "F40",
+          "F41",
+          "F42",
+          "F43",
+          "F44",
+          "F45",
+          "F46",
+          "F47",
+          "F48",
+          "F49",
+          "F50",
+          "F51",
+          "F52",
+          "F53",
+          "F54",
+          "F55",
+          "F56",
+          "F57",
+          "F58",
+          "F59",
+          "F60",
+          "F61",
+          "F62",
+          "F63",
+          "F64",
+          "F65",
+          "F66",
+          "F67",
+          "F68",
+          "F69",
+          "F70",
+          "F71",
+          "F72",
+          "F73",
+          "F74",
+          "F75",
+          "F76",
+          "F77",
+          "F78",
+          "F79",
+          "F80",
+          "F81",
+          "F82",
+          "F83",
+          "F84",
+          "F85",
+          "F86",
+          "F87",
+          "F88",
+          "F89",
+          "F90",
+          "F91",
+          "F92",
+          "F93",
+          "F94",
+          "F95",
+          "F96",
+          "F97",
+          "F98",
+          "F99",
+          "FAH",
+          "FAR",
+          "FH",
+          "FOT",
+          "FP",
+          "FR",
+          "FS",
+          "FTK",
+          "FTQ",
+          "G01",
+          "G04",
+          "G05",
+          "G06",
+          "G08",
+          "G09",
+          "G10",
+          "G11",
+          "G12",
+          "G13",
+          "G14",
+          "G15",
+          "G16",
+          "G17",
+          "G18",
+          "G19",
+          "G2",
+          "G20",
+          "G21",
+          "G23",
+          "G24",
+          "G25",
+          "G26",
+          "G27",
+          "G28",
+          "G29",
+          "G3",
+          "G30",
+          "G31",
+          "G32",
+          "G33",
+          "G34",
+          "G35",
+          "G36",
+          "G37",
+          "G38",
+          "G39",
+          "G40",
+          "G41",
+          "G42",
+          "G43",
+          "G44",
+          "G45",
+          "G46",
+          "G47",
+          "G48",
+          "G49",
+          "G50",
+          "G51",
+          "G52",
+          "G53",
+          "G54",
+          "G55",
+          "G56",
+          "G57",
+          "G58",
+          "G59",
+          "G60",
+          "G61",
+          "G62",
+          "G63",
+          "G64",
+          "G65",
+          "G66",
+          "G67",
+          "G68",
+          "G69",
+          "G70",
+          "G71",
+          "G72",
+          "G73",
+          "G74",
+          "G75",
+          "G76",
+          "G77",
+          "G78",
+          "G79",
+          "G80",
+          "G81",
+          "G82",
+          "G83",
+          "G84",
+          "G85",
+          "G86",
+          "G87",
+          "G88",
+          "G89",
+          "G90",
+          "G91",
+          "G92",
+          "G93",
+          "G94",
+          "G95",
+          "G96",
+          "G97",
+          "G98",
+          "G99",
+          "GBQ",
+          "GE",
+          "GF",
+          "GJ",
+          "GL",
+          "GLD",
+          "GLI",
+          "GLL",
+          "GM",
+          "GO",
+          "GP",
+          "GQ",
+          "GRM",
+          "GRN",
+          "GV",
+          "GWH",
+          "H03",
+          "H04",
+          "H05",
+          "H06",
+          "H07",
+          "H08",
+          "H09",
+          "H10",
+          "H11",
+          "H12",
+          "H13",
+          "H14",
+          "H15",
+          "H16",
+          "H18",
+          "H19",
+          "H20",
+          "H22",
+          "H23",
+          "H24",
+          "H26",
+          "H27",
+          "H28",
+          "H29",
+          "H30",
+          "H31",
+          "H32",
+          "H33",
+          "H34",
+          "H35",
+          "H36",
+          "H37",
+          "H38",
+          "H39",
+          "H40",
+          "H41",
+          "H42",
+          "H43",
+          "H44",
+          "H45",
+          "H46",
+          "H47",
+          "H48",
+          "H49",
+          "H50",
+          "H51",
+          "H52",
+          "H53",
+          "H54",
+          "H55",
+          "H56",
+          "H57",
+          "H58",
+          "H59",
+          "H60",
+          "H61",
+          "H62",
+          "H63",
+          "H64",
+          "H65",
+          "H66",
+          "H67",
+          "H68",
+          "H69",
+          "H70",
+          "H74",
+          "H75",
+          "H76",
+          "H78",
+          "H79",
+          "H81",
+          "H83",
+          "H84",
+          "H85",
+          "H88",
+          "HAR",
+          "HBA",
+          "HGM",
+          "HJ",
+          "HLT",
+          "HM",
+          "HMT",
+          "HN",
+          "HP",
+          "HTZ",
+          "HUR",
+          "IA",
+          "INH",
+          "INK",
+          "INQ",
+          "IU",
+          "IV",
+          "J19",
+          "J2",
+          "J20",
+          "J21",
+          "J22",
+          "J23",
+          "J24",
+          "J25",
+          "J26",
+          "J28",
+          "J29",
+          "J30",
+          "J32",
+          "J33",
+          "J34",
+          "J35",
+          "J36",
+          "J39",
+          "J40",
+          "J41",
+          "J42",
+          "J43",
+          "J44",
+          "J45",
+          "J46",
+          "J47",
+          "J48",
+          "J49",
+          "J50",
+          "J51",
+          "J52",
+          "J53",
+          "J55",
+          "J56",
+          "J57",
+          "J58",
+          "J59",
+          "J60",
+          "J61",
+          "J62",
+          "J63",
+          "J64",
+          "J65",
+          "J66",
+          "J67",
+          "J68",
+          "J69",
+          "J70",
+          "J71",
+          "J72",
+          "J73",
+          "J74",
+          "J75",
+          "J76",
+          "J78",
+          "J79",
+          "J81",
+          "J82",
+          "J83",
+          "J84",
+          "J85",
+          "J87",
+          "J89",
+          "J90",
+          "J91",
+          "J92",
+          "J93",
+          "J94",
+          "J95",
+          "J96",
+          "J97",
+          "J98",
+          "J99",
+          "JE",
+          "JK",
+          "JM",
+          "JOU",
+          "K10",
+          "K11",
+          "K12",
+          "K13",
+          "K14",
+          "K15",
+          "K16",
+          "K17",
+          "K18",
+          "K19",
+          "K20",
+          "K21",
+          "K22",
+          "K23",
+          "K24",
+          "K25",
+          "K26",
+          "K27",
+          "K28",
+          "K30",
+          "K31",
+          "K32",
+          "K33",
+          "K34",
+          "K35",
+          "K36",
+          "K37",
+          "K38",
+          "K39",
+          "K40",
+          "K41",
+          "K42",
+          "K43",
+          "K45",
+          "K46",
+          "K47",
+          "K48",
+          "K49",
+          "K5",
+          "K51",
+          "K52",
+          "K53",
+          "K54",
+          "K55",
+          "K58",
+          "K59",
+          "K6",
+          "K60",
+          "K61",
+          "K62",
+          "K63",
+          "K64",
+          "K65",
+          "K66",
+          "K67",
+          "K68",
+          "K69",
+          "K70",
+          "K71",
+          "K73",
+          "K74",
+          "K75",
+          "K76",
+          "K77",
+          "K78",
+          "K79",
+          "K80",
+          "K81",
+          "K82",
+          "K83",
+          "K84",
+          "K85",
+          "K86",
+          "K87",
+          "K88",
+          "K89",
+          "K90",
+          "K91",
+          "K92",
+          "K93",
+          "K94",
+          "K95",
+          "K96",
+          "K97",
+          "K98",
+          "K99",
+          "KAT",
+          "KBA",
+          "KEL",
+          "KGM",
+          "KGS",
+          "KHZ",
+          "KJO",
+          "KL",
+          "KLX",
+          "KMH",
+          "KMK",
+          "KMQ",
+          "KMT",
+          "KNM",
+          "KNT",
+          "KPA",
+          "KR",
+          "KTM",
+          "KTN",
+          "KVA",
+          "KVR",
+          "KVT",
+          "KW",
+          "KWH",
+          "KWN",
+          "KWS",
+          "KWT",
+          "KX",
+          "L10",
+          "L11",
+          "L12",
+          "L13",
+          "L14",
+          "L15",
+          "L16",
+          "L17",
+          "L18",
+          "L19",
+          "L2",
+          "L20",
+          "L21",
+          "L23",
+          "L24",
+          "L25",
+          "L26",
+          "L27",
+          "L28",
+          "L29",
+          "L30",
+          "L31",
+          "L32",
+          "L33",
+          "L34",
+          "L35",
+          "L36",
+          "L37",
+          "L38",
+          "L39",
+          "L40",
+          "L41",
+          "L42",
+          "L43",
+          "L44",
+          "L45",
+          "L46",
+          "L47",
+          "L48",
+          "L49",
+          "L50",
+          "L51",
+          "L52",
+          "L53",
+          "L54",
+          "L55",
+          "L56",
+          "L57",
+          "L58",
+          "L59",
+          "L60",
+          "L61",
+          "L62",
+          "L63",
+          "L64",
+          "L65",
+          "L66",
+          "L67",
+          "L68",
+          "L69",
+          "L70",
+          "L71",
+          "L72",
+          "L73",
+          "L74",
+          "L75",
+          "L76",
+          "L77",
+          "L78",
+          "L79",
+          "L80",
+          "L81",
+          "L82",
+          "L83",
+          "L84",
+          "L85",
+          "L86",
+          "L87",
+          "L88",
+          "L89",
+          "L90",
+          "L91",
+          "L92",
+          "L93",
+          "L94",
+          "L95",
+          "L96",
+          "L98",
+          "L99",
+          "LA",
+          "LBR",
+          "LD",
+          "LTN",
+          "LTR",
+          "LUM",
+          "LUX",
+          "M1",
+          "M10",
+          "M11",
+          "M12",
+          "M13",
+          "M14",
+          "M15",
+          "M16",
+          "M17",
+          "M18",
+          "M20",
+          "M21",
+          "M22",
+          "M23",
+          "M24",
+          "M26",
+          "M27",
+          "M29",
+          "M30",
+          "M31",
+          "M32",
+          "M33",
+          "M34",
+          "M35",
+          "M38",
+          "M39",
+          "M40",
+          "M41",
+          "M42",
+          "M43",
+          "M44",
+          "M45",
+          "M46",
+          "M47",
+          "M48",
+          "M49",
+          "M5",
+          "M50",
+          "M51",
+          "M52",
+          "M53",
+          "M55",
+          "M56",
+          "M57",
+          "M58",
+          "M59",
+          "M60",
+          "M61",
+          "M62",
+          "M63",
+          "M64",
+          "M65",
+          "M66",
+          "M67",
+          "M68",
+          "M69",
+          "M7",
+          "M70",
+          "M71",
+          "M72",
+          "M73",
+          "M74",
+          "M75",
+          "M76",
+          "M77",
+          "M78",
+          "M79",
+          "M80",
+          "M81",
+          "M82",
+          "M83",
+          "M84",
+          "M85",
+          "M86",
+          "M87",
+          "M88",
+          "M89",
+          "M90",
+          "M91",
+          "M92",
+          "M93",
+          "M94",
+          "M95",
+          "M96",
+          "M97",
+          "M98",
+          "M99",
+          "MAL",
+          "MAM",
+          "MAR",
+          "MAW",
+          "MBR",
+          "MC",
+          "MCU",
+          "MGM",
+          "MHZ",
+          "MIK",
+          "MIN",
+          "MLT",
+          "MMK",
+          "MMQ",
+          "MMT",
+          "MON",
+          "MPA",
+          "MQH",
+          "MQS",
+          "MSK",
+          "MTK",
+          "MTQ",
+          "MTR",
+          "MTS",
+          "MVA",
+          "MWH",
+          "N10",
+          "N11",
+          "N12",
+          "N13",
+          "N14",
+          "N15",
+          "N16",
+          "N17",
+          "N18",
+          "N19",
+          "N20",
+          "N21",
+          "N22",
+          "N23",
+          "N24",
+          "N25",
+          "N26",
+          "N27",
+          "N28",
+          "N29",
+          "N30",
+          "N31",
+          "N32",
+          "N33",
+          "N34",
+          "N35",
+          "N36",
+          "N37",
+          "N38",
+          "N39",
+          "N40",
+          "N41",
+          "N42",
+          "N43",
+          "N44",
+          "N45",
+          "N46",
+          "N47",
+          "N48",
+          "N49",
+          "N50",
+          "N51",
+          "N52",
+          "N53",
+          "N54",
+          "N55",
+          "N56",
+          "N57",
+          "N58",
+          "N59",
+          "N60",
+          "N61",
+          "N62",
+          "N63",
+          "N64",
+          "N65",
+          "N66",
+          "N67",
+          "N68",
+          "N69",
+          "N70",
+          "N71",
+          "N72",
+          "N73",
+          "N74",
+          "N75",
+          "N76",
+          "N77",
+          "N78",
+          "N79",
+          "N80",
+          "N81",
+          "N82",
+          "N83",
+          "N84",
+          "N85",
+          "N86",
+          "N87",
+          "N88",
+          "N89",
+          "N90",
+          "N91",
+          "N92",
+          "N93",
+          "N94",
+          "N95",
+          "N96",
+          "N97",
+          "N98",
+          "N99",
+          "NA",
+          "NEW",
+          "NM3",
+          "NMI",
+          "NQ",
+          "NR",
+          "NU",
+          "OHM",
+          "ON",
+          "ONZ",
+          "OPM",
+          "OZA",
+          "OZI",
+          "P10",
+          "P11",
+          "P12",
+          "P13",
+          "P14",
+          "P15",
+          "P16",
+          "P17",
+          "P18",
+          "P19",
+          "P2",
+          "P20",
+          "P21",
+          "P22",
+          "P23",
+          "P24",
+          "P25",
+          "P26",
+          "P27",
+          "P28",
+          "P29",
+          "P30",
+          "P31",
+          "P32",
+          "P33",
+          "P34",
+          "P35",
+          "P36",
+          "P37",
+          "P38",
+          "P39",
+          "P40",
+          "P41",
+          "P42",
+          "P43",
+          "P44",
+          "P45",
+          "P46",
+          "P47",
+          "P48",
+          "P49",
+          "P50",
+          "P51",
+          "P52",
+          "P53",
+          "P54",
+          "P55",
+          "P56",
+          "P57",
+          "P58",
+          "P59",
+          "P60",
+          "P61",
+          "P62",
+          "P63",
+          "P64",
+          "P65",
+          "P66",
+          "P67",
+          "P68",
+          "P69",
+          "P70",
+          "P71",
+          "P72",
+          "P73",
+          "P74",
+          "P75",
+          "P76",
+          "P77",
+          "P78",
+          "P79",
+          "P80",
+          "P81",
+          "P82",
+          "P83",
+          "P84",
+          "P85",
+          "P86",
+          "P87",
+          "PAL",
+          "PO",
+          "PS",
+          "PT",
+          "PTD",
+          "PTI",
+          "PTL",
+          "Q29",
+          "Q30",
+          "Q31",
+          "Q32",
+          "Q33",
+          "Q34",
+          "Q35",
+          "Q37",
+          "Q38",
+          "Q39",
+          "Q40",
+          "Q41",
+          "Q42",
+          "QT",
+          "QTD",
+          "QTI",
+          "QTL",
+          "RPM",
+          "RPS",
+          "S3",
+          "S4",
+          "SEC",
+          "SIE",
+          "SM3",
+          "SMI",
+          "STI",
+          "STN",
+          "TAH",
+          "TNE",
+          "UA",
+          "VLT",
+          "WEB",
+          "WEE",
+          "WHR",
+          "WTT",
+          "X1",
+          "YDK",
+          "YDQ",
+          "YRD"
+        ],
+        "type": "string"
+      },
+      "MessageTypeContentType": {
+        "enum": [
+          "ACK",
+          "BLU",
+          "EPC",
+          "ERROR",
+          "FAL1",
+          "FAL2",
+          "FAL3",
+          "FAL4",
+          "FAL5",
+          "FAL6",
+          "FAL7",
+          "HEALTH",
+          "ISPS",
+          "OTHER",
+          "PILOT",
+          "RECEIPT",
+          "SAFE",
+          "SERVICE",
+          "SR-DG",
+          "SR-DR",
+          "SR-FR",
+          "SR-HS",
+          "SR-MP",
+          "SR-PR",
+          "SR-SP",
+          "SR-VOL",
+          "UPC",
+          "WASTE"
+        ],
+        "type": "string"
+      },
+      "NameType": {
+        "type": "object",
+        "properties": {
+          "familyName": {
+            "type": "string",
+            "nullable": true
+          },
+          "givenName": {
+            "type": "string",
+            "nullable": true
+          },
+          "middleName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NavigationalStatusContentType": {
+        "enum": [
+          "Underway by engines",
+          "At anchor",
+          "Not under command",
+          "Restricted in ability to manoeuvre",
+          "Moored",
+          "Constrained by draught",
+          "Aground",
+          "Engaged in fishing",
+          "Underway by sail"
+        ],
+        "type": "string"
+      },
+      "OboLoadUnloadDataType": {
+        "type": "object",
+        "properties": {
+          "lastOilCargoDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "precedingCargo1": {
+            "type": "string",
+            "nullable": true
+          },
+          "precedingCargo2": {
+            "type": "string",
+            "nullable": true
+          },
+          "precedingCargo3": {
+            "type": "string",
+            "nullable": true
+          },
+          "slopTankStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "gasFreeCertificate": {
+            "$ref": "#/components/schemas/CertificateType"
+          },
+          "lastOilCargoPort": {
+            "$ref": "#/components/schemas/LocationType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OperationPlanType": {
+        "type": "object",
+        "properties": {
+          "quantity": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BulkCargoListType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OrganisationType": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "registrationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "taxIdentifier": {
+            "type": "string",
+            "nullable": true
+          },
+          "registrationCountryCode": {
+            "$ref": "#/components/schemas/CountryCodeContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OtherPersonDataType": {
+        "type": "object",
+        "properties": {
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "debarkationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "embarkationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "placeOfBirth": {
+            "type": "string",
+            "nullable": true
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "transit": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "countryOfBirth": {
+            "$ref": "#/components/schemas/CountryCodeContentType"
+          },
+          "nationality": {
+            "$ref": "#/components/schemas/CountryCodeContentType"
+          },
+          "countryOfResidence": {
+            "$ref": "#/components/schemas/CountryCodeContentType"
+          },
+          "gender": {
+            "$ref": "#/components/schemas/GenderContentType"
+          },
+          "name": {
+            "$ref": "#/components/schemas/NameType"
+          },
+          "personHealthParticulars": {
+            "$ref": "#/components/schemas/PersonHealthParticularsType"
+          },
+          "personIdDocument": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PersonIdDocumentType"
+            },
+            "nullable": true
+          },
+          "visaNumber": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PersonIdDocumentType"
+            },
+            "nullable": true
+          },
+          "personReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "embarkationPort": {
+            "$ref": "#/components/schemas/LocationType"
+          },
+          "debarkationPort": {
+            "$ref": "#/components/schemas/LocationType"
+          },
+          "homeAddress": {
+            "$ref": "#/components/schemas/PostalAddressType"
+          },
+          "visitAddress": {
+            "$ref": "#/components/schemas/PostalAddressType"
+          },
+          "statusText": {
+            "type": "string",
+            "nullable": true
+          },
+          "otherPersonStatus": {
+            "$ref": "#/components/schemas/OtherPersonStatusContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OtherPersonListType": {
+        "type": "object",
+        "properties": {
+          "otherPersonData": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OtherPersonDataType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OtherPersonStatusContentType": {
+        "enum": [
+          "Stowaway",
+          "RescuedAtSea",
+          "Other"
+        ],
+        "type": "string"
+      },
+      "OtherServiceContentType": {
+        "enum": [
+          "Bunkers",
+          "Cargohandling",
+          "Freshwater",
+          "Mooring",
+          "Other",
+          "Pilot",
+          "Tug",
+          "Waste"
+        ],
+        "type": "string"
+      },
+      "OtherServiceRequestType": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "serviceType": {
+            "$ref": "#/components/schemas/OtherServiceContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PackageTypeContentType": {
+        "enum": [
+          "1A",
+          "1B",
+          "1D",
+          "1F",
+          "1G",
+          "1W",
+          "2C",
+          "3A",
+          "3H",
+          "43",
+          "44",
+          "4A",
+          "4B",
+          "4C",
+          "4D",
+          "4F",
+          "4G",
+          "4H",
+          "5H",
+          "5L",
+          "5M",
+          "6H",
+          "6P",
+          "7A",
+          "7B",
+          "8A",
+          "8B",
+          "8C",
+          "AA",
+          "AB",
+          "AC",
+          "AD",
+          "AE",
+          "AF",
+          "AG",
+          "AH",
+          "AI",
+          "AJ",
+          "AL",
+          "AM",
+          "AP",
+          "AT",
+          "AV",
+          "B4",
+          "BA",
+          "BB",
+          "BC",
+          "BD",
+          "BE",
+          "BF",
+          "BG",
+          "BH",
+          "BI",
+          "BJ",
+          "BK",
+          "BL",
+          "BM",
+          "BN",
+          "BO",
+          "BP",
+          "BQ",
+          "BR",
+          "BS",
+          "BT",
+          "BU",
+          "BV",
+          "BW",
+          "BX",
+          "BY",
+          "BZ",
+          "CA",
+          "CB",
+          "CC",
+          "CD",
+          "CE",
+          "CF",
+          "CG",
+          "CH",
+          "CI",
+          "CJ",
+          "CK",
+          "CL",
+          "CM",
+          "CN",
+          "CO",
+          "CP",
+          "CQ",
+          "CR",
+          "CS",
+          "CT",
+          "CU",
+          "CV",
+          "CW",
+          "CX",
+          "CY",
+          "CZ",
+          "DA",
+          "DB",
+          "DC",
+          "DG",
+          "DH",
+          "DI",
+          "DJ",
+          "DK",
+          "DL",
+          "DM",
+          "DN",
+          "DP",
+          "DR",
+          "DS",
+          "DT",
+          "DU",
+          "DV",
+          "DW",
+          "DX",
+          "DY",
+          "EC",
+          "ED",
+          "EE",
+          "EF",
+          "EG",
+          "EH",
+          "EI",
+          "EN",
+          "FB",
+          "FC",
+          "FD",
+          "FE",
+          "FI",
+          "FL",
+          "FO",
+          "FP",
+          "FR",
+          "FT",
+          "FW",
+          "FX",
+          "GB",
+          "GI",
+          "GL",
+          "GR",
+          "GU",
+          "GY",
+          "GZ",
+          "HA",
+          "HB",
+          "HC",
+          "HG",
+          "HN",
+          "HR",
+          "IA",
+          "IB",
+          "IC",
+          "ID",
+          "IE",
+          "IF",
+          "IG",
+          "IH",
+          "IK",
+          "IL",
+          "IN",
+          "IZ",
+          "JB",
+          "JC",
+          "JG",
+          "JR",
+          "JT",
+          "JY",
+          "KG",
+          "KI",
+          "LE",
+          "LG",
+          "LT",
+          "LU",
+          "LV",
+          "LZ",
+          "MA",
+          "MB",
+          "MC",
+          "ME",
+          "MR",
+          "MS",
+          "MT",
+          "MW",
+          "MX",
+          "NA",
+          "NE",
+          "NF",
+          "NG",
+          "NS",
+          "NT",
+          "NU",
+          "NV",
+          "O1",
+          "O2",
+          "O3",
+          "O4",
+          "O5",
+          "O6",
+          "OA",
+          "OB",
+          "OC",
+          "OD",
+          "OE",
+          "OF",
+          "OG",
+          "OH",
+          "OI",
+          "OJ",
+          "OK",
+          "OL",
+          "OM",
+          "ON",
+          "OP",
+          "OQ",
+          "OR",
+          "OS",
+          "OT",
+          "OU",
+          "OV",
+          "OW",
+          "OX",
+          "OY",
+          "OZ",
+          "P2",
+          "PB",
+          "PC",
+          "PD",
+          "PE",
+          "PF",
+          "PG",
+          "PH",
+          "PI",
+          "PJ",
+          "PL",
+          "PN",
+          "PO",
+          "PP",
+          "PR",
+          "PT",
+          "PU",
+          "PV",
+          "PX",
+          "PY",
+          "PZ",
+          "QA",
+          "QB",
+          "QC",
+          "QD",
+          "QF",
+          "QG",
+          "QH",
+          "QJ",
+          "QK",
+          "QL",
+          "QM",
+          "QN",
+          "QP",
+          "QQ",
+          "QR",
+          "QS",
+          "RD",
+          "RG",
+          "RJ",
+          "RK",
+          "RO",
+          "RT",
+          "RZ",
+          "SA",
+          "SB",
+          "SC",
+          "SD",
+          "SE",
+          "SH",
+          "SI",
+          "SK",
+          "SL",
+          "SM",
+          "SO",
+          "SP",
+          "SS",
+          "ST",
+          "SV",
+          "SW",
+          "SY",
+          "SZ",
+          "T1",
+          "TB",
+          "TC",
+          "TD",
+          "TE",
+          "TG",
+          "TI",
+          "TK",
+          "TL",
+          "TN",
+          "TO",
+          "TR",
+          "TS",
+          "TT",
+          "TV",
+          "TW",
+          "TY",
+          "TZ",
+          "UC",
+          "UN",
+          "VA",
+          "VG",
+          "VI",
+          "VK",
+          "VL",
+          "VN",
+          "VO",
+          "VP",
+          "VQ",
+          "VR",
+          "VS",
+          "VY",
+          "WA",
+          "WB",
+          "WC",
+          "WD",
+          "WF",
+          "WG",
+          "WH",
+          "WJ",
+          "WK",
+          "WL",
+          "WM",
+          "WN",
+          "WP",
+          "WQ",
+          "WR",
+          "WS",
+          "WT",
+          "WU",
+          "WV",
+          "WW",
+          "WX",
+          "WY",
+          "WZ",
+          "XA",
+          "XB",
+          "XC",
+          "XD",
+          "XF",
+          "XG",
+          "XH",
+          "XJ",
+          "XK",
+          "YA",
+          "YB",
+          "YC",
+          "YD",
+          "YF",
+          "YG",
+          "YH",
+          "YJ",
+          "YK",
+          "YL",
+          "YM",
+          "YN",
+          "YP",
+          "YQ",
+          "YR",
+          "YS",
+          "YT",
+          "YV",
+          "YW",
+          "YX",
+          "YY",
+          "YZ",
+          "ZA",
+          "ZB",
+          "ZC",
+          "ZD",
+          "ZF",
+          "ZG",
+          "ZH",
+          "ZJ",
+          "ZK",
+          "ZL",
+          "ZM",
+          "ZN",
+          "ZP",
+          "ZQ",
+          "ZR",
+          "ZS",
+          "ZT",
+          "ZU",
+          "ZV",
+          "ZW",
+          "ZX",
+          "ZY",
+          "ZZ",
+          "PA",
+          "PK",
+          "RL",
+          "SU",
+          "TU"
+        ],
+        "type": "string"
+      },
+      "PackingGroupCodeContentType": {
+        "enum": [
+          "I",
+          "II",
+          "III",
+          "None"
+        ],
+        "type": "string"
+      },
+      "PassengerListType": {
+        "type": "object",
+        "properties": {
+          "passengerData": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PersonOnboardType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PersonHealthParticularsType": {
+        "type": "object",
+        "properties": {
+          "comments": {
+            "type": "string",
+            "nullable": true
+          },
+          "reportedToPortMedical": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "symptomsDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "treatment": {
+            "type": "string",
+            "nullable": true
+          },
+          "caseDisposal": {
+            "$ref": "#/components/schemas/CaseOfDisposalType"
+          },
+          "illnessCode": {
+            "$ref": "#/components/schemas/IllnessCodeContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PersonIdDocumentType": {
+        "type": "object",
+        "properties": {
+          "expirationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "idNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "issueDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "issuingCountry": {
+            "$ref": "#/components/schemas/CountryCodeContentType"
+          },
+          "idDocument": {
+            "$ref": "#/components/schemas/IdDocumentCodeContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PersonOnboardType": {
+        "type": "object",
+        "properties": {
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "debarkationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "embarkationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "placeOfBirth": {
+            "type": "string",
+            "nullable": true
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "transit": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "countryOfBirth": {
+            "$ref": "#/components/schemas/CountryCodeContentType"
+          },
+          "nationality": {
+            "$ref": "#/components/schemas/CountryCodeContentType"
+          },
+          "countryOfResidence": {
+            "$ref": "#/components/schemas/CountryCodeContentType"
+          },
+          "gender": {
+            "$ref": "#/components/schemas/GenderContentType"
+          },
+          "name": {
+            "$ref": "#/components/schemas/NameType"
+          },
+          "personHealthParticulars": {
+            "$ref": "#/components/schemas/PersonHealthParticularsType"
+          },
+          "personIdDocument": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PersonIdDocumentType"
+            },
+            "nullable": true
+          },
+          "visaNumber": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PersonIdDocumentType"
+            },
+            "nullable": true
+          },
+          "personReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "embarkationPort": {
+            "$ref": "#/components/schemas/LocationType"
+          },
+          "debarkationPort": {
+            "$ref": "#/components/schemas/LocationType"
+          },
+          "homeAddress": {
+            "$ref": "#/components/schemas/PostalAddressType"
+          },
+          "visitAddress": {
+            "$ref": "#/components/schemas/PostalAddressType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PersonsOnboardNumberType": {
+        "type": "object",
+        "properties": {
+          "crew": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "numberOfMedicalPersonsOnboard": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "numberOfPersonsOnboard": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "passengers": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PolarClassContentType": {
+        "enum": [
+          "PC1",
+          "PC2",
+          "PC3",
+          "PC4",
+          "PC5",
+          "PC6",
+          "PC7"
+        ],
+        "type": "string"
+      },
+      "PortCallListType": {
+        "type": "object",
+        "properties": {
+          "portCall": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipToPortActivityType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PositionType": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PostalAddressType": {
+        "type": "object",
+        "properties": {
+          "cityName": {
+            "type": "string",
+            "nullable": true
+          },
+          "countrySubdivisionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lineFive": {
+            "type": "string",
+            "nullable": true
+          },
+          "lineFour": {
+            "type": "string",
+            "nullable": true
+          },
+          "lineOne": {
+            "type": "string",
+            "nullable": true
+          },
+          "lineThree": {
+            "type": "string",
+            "nullable": true
+          },
+          "lineTwo": {
+            "type": "string",
+            "nullable": true
+          },
+          "postCodeCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "postOfficeBox": {
+            "type": "string",
+            "nullable": true
+          },
+          "streetName": {
+            "type": "string",
+            "nullable": true
+          },
+          "streetNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryCode": {
+            "$ref": "#/components/schemas/CountryCodeContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "RequestStatusType": {
+        "type": "object",
+        "properties": {
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/RequestStatusTypeContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RequestStatusTypeContentType": {
+        "enum": [
+          "Discarded",
+          "Pending",
+          "Accepted",
+          "NotAccepted",
+          "AcceptedWithConditions"
+        ],
+        "type": "string"
+      },
+      "RobBunkersType": {
+        "type": "object",
+        "properties": {
+          "remainOnBoard": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "bunkersType": {
+            "$ref": "#/components/schemas/BunkersTypeContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SanitaryMeasureCodeContentType": {
+        "enum": [
+          "Decontamination",
+          "Disinfection",
+          "Isolation",
+          "Other",
+          "Quarantine"
+        ],
+        "type": "string"
+      },
+      "SanitaryMeasureType": {
+        "type": "object",
+        "properties": {
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "locationOnBoard": {
+            "type": "string",
+            "nullable": true
+          },
+          "personReference": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "sanitaryMeasureCode": {
+            "$ref": "#/components/schemas/SanitaryMeasureCodeContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SecurityLevelContentType": {
+        "enum": [
+          "SL1",
+          "SL2",
+          "SL3"
+        ],
+        "type": "string"
+      },
+      "SecurityMeasureCodeContentType": {
+        "enum": [
+          "101",
+          "102",
+          "103",
+          "104",
+          "105",
+          "106",
+          "107",
+          "108"
+        ],
+        "type": "string"
+      },
+      "SecurityMeasureType": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "$ref": "#/components/schemas/SecurityMeasureCodeContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShipClassType": {
+        "type": "object",
+        "properties": {
+          "notation": {
+            "type": "string",
+            "nullable": true
+          },
+          "societyName": {
+            "type": "string",
+            "nullable": true
+          },
+          "societyCode": {
+            "$ref": "#/components/schemas/ClassSocietyContentType"
+          },
+          "country": {
+            "$ref": "#/components/schemas/CountryCodeContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShipDefectsType": {
+        "type": "object",
+        "properties": {
+          "abilityToTransferCargoBallastFuel": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "cargoHandling": {
+            "type": "string",
+            "nullable": true
+          },
+          "commuication": {
+            "type": "string",
+            "nullable": true
+          },
+          "hullIntegrity": {
+            "type": "string",
+            "nullable": true
+          },
+          "maneuvrability": {
+            "type": "string",
+            "nullable": true
+          },
+          "mooring": {
+            "type": "string",
+            "nullable": true
+          },
+          "navigation": {
+            "type": "string",
+            "nullable": true
+          },
+          "other": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShipIdType": {
+        "type": "object",
+        "properties": {
+          "callSign": {
+            "type": "string",
+            "nullable": true
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "IMONumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "MMSINumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "shipName": {
+            "type": "string",
+            "nullable": true
+          },
+          "registrationPort": {
+            "$ref": "#/components/schemas/LocationType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShipStatusType": {
+        "type": "object",
+        "properties": {
+          "course": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "pilotOnboard": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "presentDraught": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "speed": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "navigationalStatus": {
+            "$ref": "#/components/schemas/NavigationalStatusContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShipStoreItemCodeContentType": {
+        "enum": [
+          "101",
+          "102",
+          "103",
+          "104",
+          "201",
+          "202",
+          "203",
+          "301",
+          "403",
+          "501",
+          "502",
+          "503",
+          "504",
+          "505",
+          "702",
+          "999"
+        ],
+        "type": "string"
+      },
+      "ShipStoreItemType": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationOfStorage": {
+            "type": "string",
+            "nullable": true
+          },
+          "sequenceNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "measurement": {
+            "$ref": "#/components/schemas/MeasureType"
+          },
+          "code": {
+            "$ref": "#/components/schemas/ShipStoreItemCodeContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShipStoreType": {
+        "type": "object",
+        "properties": {
+          "storeItem": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipStoreItemType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShipToPortActivityType": {
+        "type": "object",
+        "properties": {
+          "fromDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "sequenceNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "toDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "portSecurityLevel": {
+            "$ref": "#/components/schemas/SecurityLevelContentType"
+          },
+          "port": {
+            "$ref": "#/components/schemas/LocationType"
+          },
+          "additionalSecurityMeasure": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SecurityMeasureType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShipToShipActivityCodeContentType": {
+        "enum": [
+          "1",
+          "10",
+          "11",
+          "12",
+          "13",
+          "14",
+          "15",
+          "16",
+          "17",
+          "18",
+          "19",
+          "2",
+          "20",
+          "21",
+          "22",
+          "23",
+          "24",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "98"
+        ],
+        "type": "string"
+      },
+      "ShipToShipActivityListType": {
+        "type": "object",
+        "properties": {
+          "shipToShipActivity": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipToShipActivityType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShipToShipActivityType": {
+        "type": "object",
+        "properties": {
+          "activity": {
+            "type": "string",
+            "nullable": true
+          },
+          "fromDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "sequenceNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "toDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "location": {
+            "$ref": "#/components/schemas/LocationType"
+          },
+          "shipSecurityMeasure": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SecurityMeasureType"
+            },
+            "nullable": true
+          },
+          "code": {
+            "$ref": "#/components/schemas/ShipToShipActivityCodeContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShipTypeContentType": {
+        "enum": [
+          "50",
+          "501",
+          "502",
+          "503",
+          "504",
+          "505",
+          "506",
+          "51",
+          "511",
+          "512",
+          "513",
+          "514",
+          "515",
+          "516",
+          "517",
+          "518",
+          "519",
+          "52",
+          "521",
+          "522",
+          "523",
+          "524",
+          "525",
+          "53",
+          "531",
+          "532",
+          "533",
+          "534",
+          "54",
+          "541",
+          "542",
+          "543",
+          "55",
+          "551",
+          "552",
+          "553",
+          "57",
+          "59",
+          "591",
+          "592",
+          "593",
+          "594",
+          "60",
+          "601",
+          "602",
+          "603",
+          "604",
+          "605",
+          "606",
+          "607",
+          "70",
+          "711",
+          "712",
+          "72",
+          "721",
+          "723",
+          "724",
+          "725",
+          "726",
+          "727",
+          "728",
+          "729",
+          "73",
+          "74",
+          "75",
+          "751",
+          "752",
+          "753",
+          "76",
+          "761",
+          "762",
+          "763",
+          "764",
+          "765",
+          "766",
+          "77",
+          "78",
+          "781",
+          "782",
+          "80",
+          "81",
+          "82",
+          "83",
+          "84",
+          "85",
+          "86",
+          "87",
+          "89",
+          "90",
+          "91"
+        ],
+        "type": "string"
+      },
+      "SpecialCargoDetailsType": {
+        "type": "object",
+        "properties": {
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "noOfPackages": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "vehicleIdentificationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "safetyDataSheetReference": {
+            "$ref": "#/components/schemas/AttachmentType"
+          },
+          "cargoInformationHolder": {
+            "$ref": "#/components/schemas/ContactInfoType"
+          },
+          "consignor": {
+            "$ref": "#/components/schemas/ContactInfoType"
+          },
+          "packer": {
+            "$ref": "#/components/schemas/ContactInfoType"
+          },
+          "DGSafetyDataSheet": {
+            "$ref": "#/components/schemas/DgSafetyDataSheetType"
+          },
+          "dangerousGoodsPackageType": {
+            "$ref": "#/components/schemas/PackageTypeContentType"
+          },
+          "originalPortOfShipment": {
+            "$ref": "#/components/schemas/LocationType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TimeTypeContentType": {
+        "enum": [
+          "Actual",
+          "Estimated",
+          "Planned",
+          "Requested"
+        ],
+        "type": "string"
+      },
+      "TrackContentType": {
+        "enum": [
+          "RL",
+          "GC",
+          "CO"
+        ],
+        "type": "string"
+      },
+      "TransportEquipmentType": {
+        "type": "object",
+        "properties": {
+          "marksAndNumbers": {
+            "type": "string",
+            "nullable": true
+          },
+          "onboardLocation": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UnHazardClassContentType": {
+        "enum": [
+          "1.1A",
+          "1.1B",
+          "1.1C",
+          "1.1D",
+          "1.1E",
+          "1.1F",
+          "1.1G",
+          "1.1J",
+          "1.1L",
+          "1.2B",
+          "1.2C",
+          "1.2D",
+          "1.2E",
+          "1.2F",
+          "1.2G",
+          "1.2H",
+          "1.2J",
+          "1.2K",
+          "1.2L",
+          "1.3C",
+          "1.3F",
+          "1.3G",
+          "1.3H",
+          "1.3J",
+          "1.3K",
+          "1.3L",
+          "1.4B",
+          "1.4C",
+          "1.4D",
+          "1.4E",
+          "1.4F",
+          "1.4G",
+          "1.4S",
+          "1.5D",
+          "1.6N",
+          "2.1",
+          "2.2",
+          "2.3",
+          "3",
+          "4.1",
+          "4.2",
+          "4.3",
+          "5.1",
+          "5.2",
+          "6.1",
+          "6.2",
+          "7",
+          "8",
+          "9",
+          "A",
+          "A AND B",
+          "B",
+          "N.A",
+          "P",
+          "S",
+          "S/P"
+        ],
+        "type": "string"
+      },
+      "VoyageDescriptionItemType": {
+        "type": "object",
+        "properties": {
+          "load": {
+            "type": "string",
+            "nullable": true
+          },
+          "unload": {
+            "type": "string",
+            "nullable": true
+          },
+          "ETA": {
+            "$ref": "#/components/schemas/DateTimeType"
+          },
+          "port": {
+            "$ref": "#/components/schemas/LocationType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VoyageDescriptionType": {
+        "type": "object",
+        "properties": {
+          "portCall": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VoyageDescriptionItemType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "VoyageEventListType": {
+        "type": "object",
+        "properties": {
+          "voyageEvent": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VoyageEventType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "VoyageEventType": {
+        "type": "object",
+        "properties": {
+          "arrivalTime": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DateTimeType"
+            },
+            "nullable": true
+          },
+          "departureTime": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DateTimeType"
+            },
+            "nullable": true
+          },
+          "location": {
+            "$ref": "#/components/schemas/LocationType"
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "eventType": {
+            "$ref": "#/components/schemas/VoyageEventTypeContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VoyageEventTypeContentType": {
+        "enum": [
+          "MSRArrival",
+          "MSRDeparture",
+          "Other",
+          "PilotBoarding",
+          "PilotLeaving",
+          "PointOfPassage",
+          "ReportingPosition"
+        ],
+        "type": "string"
+      },
+      "WasteDeliveryStatusContentType": {
+        "enum": [
+          "All",
+          "None"
+        ],
+        "type": "string"
+      },
+      "WasteDisposalInformationType": {
+        "type": "object",
+        "properties": {
+          "estimatedGenerated": {
+            "$ref": "#/components/schemas/MeasureType"
+          },
+          "maxStorage": {
+            "$ref": "#/components/schemas/MeasureType"
+          },
+          "retainedOnboard": {
+            "$ref": "#/components/schemas/MeasureType"
+          },
+          "toBeDelivered": {
+            "$ref": "#/components/schemas/MeasureType"
+          },
+          "disposedOfInPort": {
+            "$ref": "#/components/schemas/LocationType"
+          },
+          "wasteType": {
+            "$ref": "#/components/schemas/WasteTypeType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WasteInformationType": {
+        "type": "object",
+        "properties": {
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "pointOfContact": {
+            "$ref": "#/components/schemas/ContactInfoType"
+          },
+          "lastPortDelivered": {
+            "$ref": "#/components/schemas/LocationCallType"
+          },
+          "nextPortToDeliver": {
+            "$ref": "#/components/schemas/LocationType"
+          },
+          "wasteDeliveryStatus": {
+            "$ref": "#/components/schemas/WasteDeliveryStatusContentType"
+          },
+          "wasteDisposalInformation": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WasteDisposalInformationType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WasteTypeCodeContentType": {
+        "enum": [
+          "101",
+          "102",
+          "103",
+          "104",
+          "105",
+          "106",
+          "201",
+          "202",
+          "203",
+          "204",
+          "401",
+          "501",
+          "502",
+          "503",
+          "504",
+          "505",
+          "506",
+          "507",
+          "508",
+          "509",
+          "510",
+          "511",
+          "601",
+          "602"
+        ],
+        "type": "string"
+      },
+      "WasteTypeType": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "$ref": "#/components/schemas/WasteTypeCodeContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WaypointListType": {
+        "type": "object",
+        "properties": {
+          "waypoint": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WaypointType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WaypointType": {
+        "type": "object",
+        "properties": {
+          "arrivalTime": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DateTimeType"
+            },
+            "nullable": true
+          },
+          "departureTime": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DateTimeType"
+            },
+            "nullable": true
+          },
+          "location": {
+            "$ref": "#/components/schemas/LocationType"
+          },
+          "track": {
+            "$ref": "#/components/schemas/TrackContentType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WeatherInformationType": {
+        "type": "object",
+        "properties": {
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "seaState": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "seaStateDirection": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "swell": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "swellDirection": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "windDirection": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "windForce": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Authorization": {
+        "type": "http",
+        "scheme": "Bearer",
+        "bearerFormat": "JWT"
+      },
+      "Ocp-Apim-Subscription-Key": {
+        "type": "apiKey",
+        "name": "Ocp-Apim-Subscription-Key",
+        "in": "header"
+      }
+    }
+  },
+  "security": [
+    {
+      "Authorization": [ ],
+      "Ocp-Apim-Subscription-Key": [ ]
+    }
+  ]
+}
