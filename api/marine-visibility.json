@@ -134,14 +134,7 @@
             }
           },
           "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MarineVisibilityResponse"
-                }
-              }
-            }
+            "description": "Created"
           }
         }
       }
@@ -177,19 +170,6 @@
         },
         "additionalProperties": false
       },
-      "CargoDataRequest": {
-        "type": "object",
-        "properties": {
-          "consignment": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ConsignmentRequest"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "CargoDataResponse": {
         "type": "object",
         "properties": {
@@ -199,22 +179,6 @@
               "$ref": "#/components/schemas/ConsignmentResponse"
             },
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "CargoItemRequest": {
-        "type": "object",
-        "properties": {
-          "itemNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "goodsType": {
-            "$ref": "#/components/schemas/GoodsTypeRequest"
-          },
-          "quantities": {
-            "$ref": "#/components/schemas/QuantitiesRequest"
           }
         },
         "additionalProperties": false
@@ -249,23 +213,6 @@
         "properties": {
           "organisation": {
             "$ref": "#/components/schemas/OrganisationResponse"
-          }
-        },
-        "additionalProperties": false
-      },
-      "ConsignmentRequest": {
-        "type": "object",
-        "properties": {
-          "consignmentNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "cargoItem": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CargoItemRequest"
-            },
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -315,18 +262,8 @@
       },
       "DateTimeTypeRequest": {
         "enum": [
-          "NORTendered",
-          "NORAccepted",
-          "PlannedArrivalAtBerth",
-          "ActualArrivalAtBerth",
-          "PlannedFirstHoseConnected",
-          "ActualFirstHoseConnected",
-          "PlannedLastHoseDisconnected",
-          "ActualLastHoseDisconnected",
-          "PlannedDepartureFromLastBerth",
-          "ActualDepartureFromLastBerth",
-          "PlannedDepartureFromBerth",
-          "ActualDepartureFromBerth"
+          "PlannedArrivalAtAnchorage",
+          "LaycanStart"
         ],
         "type": "string"
       },
@@ -347,20 +284,6 @@
         ],
         "type": "string"
       },
-      "GoodsTypeRequest": {
-        "type": "object",
-        "properties": {
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "HSCode": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "GoodsTypeResponse": {
         "type": "object",
         "properties": {
@@ -378,10 +301,6 @@
       "MarineVisibilityRequest": {
         "type": "object",
         "properties": {
-          "marineCallId": {
-            "type": "string",
-            "nullable": true
-          },
           "terminalArrival": {
             "type": "array",
             "items": {
@@ -406,22 +325,12 @@
           "agent": {
             "$ref": "#/components/schemas/AgentRequest"
           },
-          "navigationalStatus": {
-            "type": "string",
-            "nullable": true
-          },
-          "trackAndTrace": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TrackAndTraceRequest"
-            },
-            "nullable": true
-          },
-          "cargoData": {
-            "$ref": "#/components/schemas/CargoDataRequest"
-          },
           "company": {
             "$ref": "#/components/schemas/CompanyRequest"
+          },
+          "generalRemark": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -540,28 +449,6 @@
         },
         "additionalProperties": { }
       },
-      "QuantitiesRequest": {
-        "type": "object",
-        "properties": {
-          "ordered": {
-            "type": "string",
-            "nullable": true
-          },
-          "orderedUom": {
-            "type": "string",
-            "nullable": true
-          },
-          "established": {
-            "type": "string",
-            "nullable": true
-          },
-          "establishedUom": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "QuantitiesResponse": {
         "type": "object",
         "properties": {
@@ -587,10 +474,6 @@
       "ShipIdentifierRequest": {
         "type": "object",
         "properties": {
-          "callSign": {
-            "type": "string",
-            "nullable": true
-          },
           "shipName": {
             "type": "string",
             "nullable": true
@@ -636,6 +519,24 @@
         },
         "additionalProperties": false
       },
+      "TerminalArrivalLocationRequest": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "UNLoCode": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "TerminalArrivalRequest": {
         "type": "object",
         "properties": {
@@ -647,7 +548,7 @@
             "nullable": true
           },
           "location": {
-            "$ref": "#/components/schemas/TerminalLocationRequest"
+            "$ref": "#/components/schemas/TerminalArrivalLocationRequest"
           }
         },
         "additionalProperties": false
@@ -668,39 +569,7 @@
         },
         "additionalProperties": false
       },
-      "TerminalDepartureRequest": {
-        "type": "object",
-        "properties": {
-          "departureTime": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DateTimeRequest"
-            },
-            "nullable": true
-          },
-          "location": {
-            "$ref": "#/components/schemas/TerminalLocationRequest"
-          }
-        },
-        "additionalProperties": false
-      },
-      "TerminalDepartureResponse": {
-        "type": "object",
-        "properties": {
-          "departureTime": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DateTimeResponse"
-            },
-            "nullable": true
-          },
-          "location": {
-            "$ref": "#/components/schemas/TerminalLocationResponse"
-          }
-        },
-        "additionalProperties": false
-      },
-      "TerminalLocationRequest": {
+      "TerminalDepartureLocationRequest": {
         "type": "object",
         "properties": {
           "type": {
@@ -718,6 +587,38 @@
           "UNLoCode": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TerminalDepartureRequest": {
+        "type": "object",
+        "properties": {
+          "departureTime": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DateTimeRequest"
+            },
+            "nullable": true
+          },
+          "location": {
+            "$ref": "#/components/schemas/TerminalDepartureLocationRequest"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TerminalDepartureResponse": {
+        "type": "object",
+        "properties": {
+          "departureTime": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DateTimeResponse"
+            },
+            "nullable": true
+          },
+          "location": {
+            "$ref": "#/components/schemas/TerminalLocationResponse"
           }
         },
         "additionalProperties": false
@@ -740,29 +641,6 @@
           "UNLoCode": {
             "type": "string",
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "TrackAndTraceRequest": {
-        "type": "object",
-        "properties": {
-          "arrivalTime": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DateTimeRequest"
-            },
-            "nullable": true
-          },
-          "departureTime": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DateTimeRequest"
-            },
-            "nullable": true
-          },
-          "location": {
-            "$ref": "#/components/schemas/TerminalLocationRequest"
           }
         },
         "additionalProperties": false
