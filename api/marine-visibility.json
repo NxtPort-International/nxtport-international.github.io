@@ -529,10 +529,6 @@
           "code": {
             "type": "string",
             "nullable": true
-          },
-          "UNLoCode": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -583,10 +579,6 @@
           "code": {
             "type": "string",
             "nullable": true
-          },
-          "UNLoCode": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -635,10 +627,6 @@
             "nullable": true
           },
           "code": {
-            "type": "string",
-            "nullable": true
-          },
-          "UNLoCode": {
             "type": "string",
             "nullable": true
           }
