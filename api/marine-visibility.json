@@ -5,23 +5,12 @@
     "version": "v1"
   },
   "paths": {
-    "/MarineVisibilities/{marineCallId}": {
+    "/MarineVisibilities": {
       "get": {
         "tags": [
           "MarineVisibilities"
         ],
-        "summary": "Get marine visibility by identifier.",
-        "parameters": [
-          {
-            "name": "marineCallId",
-            "in": "path",
-            "description": "Marine call identifier.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "summary": "List marine visibilities.",
         "responses": {
           "401": {
             "description": "Unauthorized",
@@ -44,7 +33,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -54,29 +43,20 @@
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MarineVisibilityResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MarineVisibilityResponse"
+                  }
                 }
               }
             }
           }
         }
-      }
-    },
-    "/MarineVisibilities": {
+      },
       "post": {
         "tags": [
           "MarineVisibilities"
@@ -124,7 +104,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -135,6 +115,77 @@
           },
           "201": {
             "description": "Created"
+          }
+        }
+      }
+    },
+    "/MarineVisibilities/{marineCallId}": {
+      "get": {
+        "tags": [
+          "MarineVisibilities"
+        ],
+        "summary": "Get marine visibility by identifier.",
+        "parameters": [
+          {
+            "name": "marineCallId",
+            "in": "path",
+            "description": "Marine call identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarineVisibilityResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         }
       }
