@@ -11,6 +11,26 @@
           "MarineVisibilities"
         ],
         "summary": "List marine visibilities.",
+        "parameters": [
+          {
+            "name": "fromDateTime",
+            "in": "query",
+            "description": "Start date of the date range you want to filter on.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "toDateTime",
+            "in": "query",
+            "description": "End date of the date range you want to filter on.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
         "responses": {
           "401": {
             "description": "Unauthorized",
